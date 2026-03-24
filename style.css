@@ -1245,3 +1245,99 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   border-radius: var(--radius);
   height: 1em;
 }
+/* ============================================================
+   🔥 LIGHT MODE FINAL FIX — HIGH READABILITY (PASTE AT END)
+   ============================================================ */
+
+/* ===== STRONGER TEXT VARIABLES ===== */
+[data-theme="light"] {
+  --text-primary: #1A0F05;     /* already good */
+  --text-secondary: #3E2723;   /* stronger sepia */
+  --text-muted: #5D4037;       /* readable brown */
+}
+
+/* ===== HERO QUOTE FIX (MAIN PROBLEM) ===== */
+[data-theme="light"] .hero-quote {
+  background: rgba(93, 64, 55, 0.08);
+  border-left: 3px solid #5D4037;
+}
+
+[data-theme="light"] .hero-quote p {
+  color: #2C2C2C; /* FIX: was too light */
+}
+
+[data-theme="light"] .hero-quote cite {
+  color: #5D4037;
+}
+
+/* ===== STATS LABELS (LANGUAGES, YEARS) ===== */
+[data-theme="light"] .stat-label {
+  color: #5D4037; /* FIX: darker */
+}
+
+/* ===== GENERAL PARAGRAPH TEXT BOOST ===== */
+[data-theme="light"] p,
+[data-theme="light"] .bio-overview,
+[data-theme="light"] .timeline-detail,
+[data-theme="light"] .work-summary,
+[data-theme="light"] .travel-detail,
+[data-theme="light"] .member-desc {
+  color: #3E2723;
+}
+
+/* ===== META TEXT (SMALL LABELS) ===== */
+[data-theme="light"] .search-result-meta,
+[data-theme="light"] .timeline-year,
+[data-theme="light"] .travel-purpose,
+[data-theme="light"] .char-role,
+[data-theme="light"] .work-meta-label,
+[data-theme="light"] .footer-sub {
+  color: #5D4037;
+}
+
+/* ===== TAGS FIX ===== */
+[data-theme="light"] .tag {
+  color: #3E2723;
+  border-color: rgba(62, 39, 35, 0.25);
+  background: #FFFFFF;
+}
+
+/* ===== BUTTON FIX (VERY IMPORTANT) ===== */
+[data-theme="light"] .btn-secondary {
+  color: #3E2723;
+  border: 1px solid #5D4037;
+  background: transparent;
+}
+
+[data-theme="light"] .btn-secondary:hover {
+  background: rgba(93, 64, 55, 0.08);
+  border-color: #3E2723;
+  color: #2C2C2C;
+}
+
+/* ===== PRIMARY BUTTON TEXT FIX ===== */
+[data-theme="light"] .btn-primary {
+  color: #1A0F05;
+}
+
+/* ===== FACT TOAST TEXT ===== */
+[data-theme="light"] #factText {
+  color: #2C2C2C;
+}
+
+/* ===== WORK SIGNIFICANCE BOX ===== */
+[data-theme="light"] .work-significance {
+  color: #2C2C2C;
+  background: rgba(93, 64, 55, 0.08);
+}
+
+/* ===== SMALL TEXT ===== */
+[data-theme="light"] small,
+[data-theme="light"] .text-muted {
+  color: #6D4C41;
+}
+
+/* ===== PLACEHOLDER TEXT ===== */
+[data-theme="light"] .search-input::placeholder {
+  color: #8D6E63;
+}
