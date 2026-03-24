@@ -357,7 +357,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   background: var(--border);
 }
 
-.hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 80px; }
 
 .btn-primary {
   display: inline-block;
