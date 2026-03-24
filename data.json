@@ -29,61 +29,84 @@
         "year": 1861,
         "event": "Born in Calamba, Laguna",
         "detail": "José Rizal was born on June 19, 1861, the seventh of eleven children to Francisco Rizal Mercado II and Teodora Alonso Realonda.",
-        "icon": "🌅"
+        "imageURL": "./assests/images/Rizal Shrine.jpg"
       },
       {
         "year": 1877,
         "event": "Enrolled at the University of Santo Tomas",
         "detail": "Rizal studied Philosophy and Letters at UST, later shifting to Medicine — motivated by his mother Teodora's failing eyesight.",
-        "icon": "📚"
+        "imageURL": "./assests/images/UniversityOfSantoTomas.jpg"
       },
       {
         "year": 1882,
         "event": "Departed for Spain",
         "detail": "Secretly and without his parents' knowledge, Rizal sailed to Spain to continue his medical studies at the Universidad Central de Madrid.",
-        "icon": "⛵"
+        "imageURL": "./assests/images/Spain port of barcelona.jpg"
       },
       {
         "year": 1884,
         "event": "Licentiate in Medicine — Madrid",
         "detail": "Rizal completed his Licentiate in Medicine and began studying ophthalmology under Dr. Louis de Wecker in Paris.",
-        "icon": "🎓"
+        "imageURL": "./assests/images/Licentiate in Madrid.jpg"
       },
       {
         "year": 1887,
         "event": "Noli Me Tángere Published",
         "detail": "Rizal's debut novel was published in Berlin, Germany, exposing the abuses of the Spanish colonial government and the Catholic Church.",
-        "icon": "📖"
+        "imageURL": "./assests/images/Noli Me.jpg"
       },
       {
         "year": 1888,
         "event": "Traveled through Asia and Europe",
         "detail": "Rizal toured Japan, the United States, and England, conducting research at the British Museum and annotating Morga's Sucesos de las Islas Filipinas.",
-        "icon": "🗺️"
+        "imageURL": "./assests/images/Travels (London).jpg"
       },
       {
         "year": 1891,
         "event": "El Filibusterismo Published",
         "detail": "The sequel to Noli was published in Ghent, Belgium. Darker and more revolutionary in tone, it urged more radical reform.",
-        "icon": "📖"
+        "imageURL": "./assests/images/El Fili Book.jpg"
       },
       {
         "year": 1892,
         "event": "Founded La Liga Filipina",
         "detail": "Upon returning to the Philippines, Rizal founded La Liga Filipina, a civic organization. He was arrested and exiled to Dapitan days later.",
-        "icon": "🏛️"
+        "imageURL": "./assests/images/La Liga Filipina.jpg"
       },
       {
         "year": 1896,
         "event": "Arrested and Tried for Sedition",
         "detail": "Rizal was arrested, tried by a military court, and found guilty of rebellion, sedition, and conspiracy — charges he denied.",
-        "icon": "⚖️"
+        "imageURL": "./assests/images/Fort Santiago.jpg"
       },
       {
         "year": 1896,
         "event": "Executed at Bagumbayan",
         "detail": "On December 30, 1896, at 35 years old, Rizal was executed by musketry. His last poem, Mi Último Adiós, was secretly folded inside an oil lamp.",
-        "icon": "🕯️"
+        "imageURL": "./assests/images/rizal monument.jpg"
+      }
+    ],
+    "gallery": [
+      {
+        "id": "rizal-portrait",
+        "title": "José Rizal Portrait",
+        "description": "Official portrait of José Rizal, the Philippine national hero.",
+        "imageURL": "./assests/images/Jose Rizal Portrait.jpg",
+        "year": "c. 1890"
+      },
+      {
+        "id": "noli-cover",
+        "title": "Noli Me Tángere — First Edition Cover",
+        "description": "The cover of the first edition of Noli Me Tángere, published in Berlin in 1887.",
+        "imageURL": "./assests/images/Noli Me Tangere 1887 first edition cover.jpg",
+        "year": "1887"
+      },
+      {
+        "id": "fort-santiago",
+        "title": "Fort Santiago, Manila",
+        "description": "The historical fortress where Rizal was imprisoned before his execution.",
+        "imageURL": "./assests/images/Fort Santiago Manila historical gate 1800s.jpg",
+        "year": "Historic Site"
       }
     ]
   },

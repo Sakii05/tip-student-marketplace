@@ -41,6 +41,7 @@ function initApp() {
   renderWorks();
   renderTravels();
   renderGroup();
+  renderGallery();
   initTheme();
   initSearch();
   initFactToast();
@@ -86,7 +87,7 @@ function renderBiography() {
   timeline.innerHTML = biography.timeline.map((item, i) => `
     <div class="timeline-item reveal" style="transition-delay:${i * 0.05}s">
       <div class="timeline-year">${item.year}</div>
-      <div class="timeline-icon">${item.icon}</div>
+      ${item.imageURL ? `<img src="${item.imageURL}" alt="${item.event}" class="timeline-img" />` : ''}
       <div class="timeline-event">${item.event}</div>
       <div class="timeline-detail">${item.detail}</div>
     </div>
@@ -195,6 +196,28 @@ function renderGroup() {
       <div class="member-desc">${member.description}</div>
       <div class="member-skills">
         ${member.skills.map(s => `<span class="skill-tag">${s}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// RENDER: GALLERY
+// ============================================================
+function renderGallery() {
+  const { gallery } = DATA.biography;
+  const container = document.getElementById('galleryGrid');
+  if (!container || !gallery) return;
+
+  container.innerHTML = gallery.map((item, i) => `
+    <div class="gallery-card reveal" style="transition-delay:${i * 0.1}s">
+      <div class="gallery-image-wrapper">
+        <img src="${item.imageURL}" alt="${item.title}" class="gallery-image" />
+      </div>
+      <div class="gallery-content">
+        <h4 class="gallery-title">${item.title}</h4>
+        <p class="gallery-description">${item.description}</p>
+        <div class="gallery-year">${item.year}</div>
       </div>
     </div>
   `).join('');
