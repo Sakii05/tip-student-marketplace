@@ -1,0 +1,288 @@
+{
+  "hero": {
+    "tagline": "Ang hindi marunong lumingon sa pinanggalingan ay hindi makararating sa paroroonan.",
+    "translation": "He who does not look back at where he came from will never reach his destination.",
+    "attribution": "— José Rizal"
+  },
+  "biography": {
+    "overview": "José Protasio Rizal Mercado y Alonso Realonda was a Filipino nationalist, writer, and polymath. The most prominent advocate for reform in the Philippines during the Spanish colonial era, he is regarded as the national hero of the Philippines.",
+    "born": "June 19, 1861",
+    "birthplace": "Calamba, Laguna, Philippines",
+    "died": "December 30, 1896",
+    "deathplace": "Bagumbayan (now Luneta Park), Manila",
+    "languages": ["Filipino", "Spanish", "German", "French", "Latin", "Greek", "English", "Italian", "Japanese", "Arabic"],
+    "fields": ["Ophthalmology", "Literature", "Poetry", "Sculpture", "Painting", "Fencing", "Architecture", "Sociology"],
+    "funFacts": [
+      "Rizal could read and write by age 2.",
+      "He spoke over 22 languages fluently.",
+      "He was a sculptor, painter, poet, ophthalmologist, and nationalist — all at once.",
+      "His final poem, Mi Último Adiós, was hidden inside an oil lamp before his execution.",
+      "He completed his ophthalmology training and restored his mother's failing eyesight.",
+      "Rizal was only 35 years old when he was executed.",
+      "He was a champion fencer and pistol shooter in Europe.",
+      "Rizal corresponded with European scholars including Ferdinand Blumentritt.",
+      "He designed and built a water system for the community in Dapitan.",
+      "His novel Noli Me Tángere was banned immediately upon arriving in the Philippines."
+    ],
+    "timeline": [
+      {
+        "year": 1861,
+        "event": "Born in Calamba, Laguna",
+        "detail": "José Rizal was born on June 19, 1861, the seventh of eleven children to Francisco Rizal Mercado II and Teodora Alonso Realonda.",
+        "imageURL": "./assests/images/Rizal Shrine.jpg"
+      },
+      {
+        "year": 1877,
+        "event": "Enrolled at the University of Santo Tomas",
+        "detail": "Rizal studied Philosophy and Letters at UST, later shifting to Medicine — motivated by his mother Teodora's failing eyesight.",
+        "imageURL": "./assests/images/UniversityOfSantoTomas.jpg"
+      },
+      {
+        "year": 1882,
+        "event": "Departed for Spain",
+        "detail": "Secretly and without his parents' knowledge, Rizal sailed to Spain to continue his medical studies at the Universidad Central de Madrid.",
+        "imageURL": "./assests/images/Spain port of barcelona.jpg"
+      },
+      {
+        "year": 1884,
+        "event": "Licentiate in Medicine — Madrid",
+        "detail": "Rizal completed his Licentiate in Medicine and began studying ophthalmology under Dr. Louis de Wecker in Paris.",
+        "imageURL": "./assests/images/Licentiate in Madrid.jpg"
+      },
+      {
+        "year": 1887,
+        "event": "Noli Me Tángere Published",
+        "detail": "Rizal's debut novel was published in Berlin, Germany, exposing the abuses of the Spanish colonial government and the Catholic Church.",
+        "imageURL": "./assests/images/Noli Me.jpg"
+      },
+      {
+        "year": 1888,
+        "event": "Traveled through Asia and Europe",
+        "detail": "Rizal toured Japan, the United States, and England, conducting research at the British Museum and annotating Morga's Sucesos de las Islas Filipinas.",
+        "imageURL": "./assests/images/Travels (London).jpg"
+      },
+      {
+        "year": 1891,
+        "event": "El Filibusterismo Published",
+        "detail": "The sequel to Noli was published in Ghent, Belgium. Darker and more revolutionary in tone, it urged more radical reform.",
+        "imageURL": "./assests/images/El Fili Book.jpg"
+      },
+      {
+        "year": 1892,
+        "event": "Founded La Liga Filipina",
+        "detail": "Upon returning to the Philippines, Rizal founded La Liga Filipina, a civic organization. He was arrested and exiled to Dapitan days later.",
+        "imageURL": "./assests/images/La Liga Filipina.jpg"
+      },
+      {
+        "year": 1896,
+        "event": "Arrested and Tried for Sedition",
+        "detail": "Rizal was arrested, tried by a military court, and found guilty of rebellion, sedition, and conspiracy — charges he denied.",
+        "imageURL": "./assests/images/Fort Santiago.jpg"
+      },
+      {
+        "year": 1896,
+        "event": "Executed at Bagumbayan",
+        "detail": "On December 30, 1896, at 35 years old, Rizal was executed by musketry. His last poem, Mi Último Adiós, was secretly folded inside an oil lamp.",
+        "imageURL": "./assests/images/rizal monument.jpg"
+      }
+    ],
+    "gallery": [
+      {
+        "id": "rizal-portrait",
+        "title": "José Rizal Portrait",
+        "description": "Official portrait of José Rizal, the Philippine national hero.",
+        "imageURL": "./assests/images/Jose Rizal Portrait.jpg",
+        "year": "c. 1890"
+      },
+      {
+        "id": "noli-cover",
+        "title": "Noli Me Tángere — First Edition Cover",
+        "description": "The cover of the first edition of Noli Me Tángere, published in Berlin in 1887.",
+        "imageURL": "./assests/images/Noli Me Tangere 1887 first edition cover.jpg",
+        "year": "1887"
+      },
+      {
+        "id": "fort-santiago",
+        "title": "Fort Santiago, Manila",
+        "description": "The historical fortress where Rizal was imprisoned before his execution.",
+        "imageURL": "./assests/images/Fort Santiago Manila historical gate 1800s.jpg",
+        "year": "Historic Site"
+      }
+    ]
+  },
+  "works": [
+    {
+      "id": "noli",
+      "title": "Noli Me Tángere",
+      "subtitle": "Touch Me Not",
+      "year": 1887,
+      "language": "Spanish",
+      "publishedIn": "Berlin, Germany",
+      "genre": "Social Novel",
+      "dedication": "To the Philippines",
+      "summary": "A scathing social novel that exposes the corruption of Spanish colonial rule, the abuses of the Catholic friars, and the suffering of the Filipino people through the eyes of Crisostomo Ibarra, a young Filipino idealist who returns from Europe.",
+      "themes": ["Colonial Oppression", "Social Injustice", "Love and Sacrifice", "The Church and Power", "Filipino Identity"],
+      "significance": "The novel ignited a sense of Filipino national identity and is credited with sparking the revolution against Spain.",
+      "accentColor": "#8B2635",
+      "characters": [
+        { "name": "Crisostomo Ibarra", "role": "Protagonist", "description": "An idealistic young Filipino ilustrado who returns from Europe with dreams of reform, only to be crushed by the colonial system.", "archetype": "The Dreamer" },
+        { "name": "María Clara", "role": "Love Interest", "description": "Ibarra's childhood sweetheart, the epitome of the tragic Filipino woman — beautiful, devout, and imprisoned by social expectations.", "archetype": "The Ideal" },
+        { "name": "Padre Dámaso", "role": "Antagonist", "description": "An arrogant and licentious Spanish friar who embodies the corruption and hypocrisy of the colonial Church.", "archetype": "The Oppressor" },
+        { "name": "Elías", "role": "Foil / Rebel", "description": "A mysterious outlaw who represents the revolutionary class — those who have lost everything to injustice and demand radical change.", "archetype": "The Revolutionary" },
+        { "name": "Sisa", "role": "Tragic Figure", "description": "A mother who goes mad searching for her sons Basilio and Crispin, symbolizing the tragedy of ordinary Filipinos victimized by colonial abuse.", "archetype": "The Martyr" }
+      ]
+    },
+    {
+      "id": "fili",
+      "title": "El Filibusterismo",
+      "subtitle": "The Reign of Greed",
+      "year": 1891,
+      "language": "Spanish",
+      "publishedIn": "Ghent, Belgium",
+      "genre": "Political Novel",
+      "dedication": "To GOMBURZA — the three martyred Filipino priests",
+      "summary": "The darker, more revolutionary sequel to Noli. Ibarra, now disguised as the wealthy jeweler Simoun, returns to the Philippines not to reform the system, but to destroy it — plotting a violent revolution fueled by personal vendetta and nationalist rage.",
+      "themes": ["Revolution vs. Reform", "Vengeance and Justice", "Corruption", "The Cost of Passivity", "Colonial Legacy"],
+      "significance": "El Filibusterismo is more pessimistic than Noli, suggesting that peaceful reform is impossible and that Filipinos must awaken — or be destroyed by their own passivity.",
+      "accentColor": "#1A3A5C",
+      "characters": [
+        { "name": "Simoun / Ibarra", "role": "Protagonist", "description": "Crisostomo Ibarra reborn as a cynical, vengeful jeweler. He manipulates the colonial elite to fund a violent revolution, having abandoned his faith in peaceful reform.", "archetype": "The Fallen Idealist" },
+        { "name": "Basilio", "role": "Secondary Protagonist", "description": "Sisa's son, now a medical student. He represents the educated youth torn between Simoun's violent path and the hope of a better future through education.", "archetype": "The Witness" },
+        { "name": "Isagani", "role": "Idealistic Student", "description": "A passionate poet and student who believes in reform through love and education, ultimately sabotaging Simoun's bomb plot out of love for Paulita.", "archetype": "The Romantic" },
+        { "name": "Padre Florentino", "role": "Moral Voice", "description": "A wise Filipino secular priest who serves as the novel's moral compass, delivering Rizal's famous message about freedom at the story's end.", "archetype": "The Sage" },
+        { "name": "Cabesang Tales", "role": "Tragic Rebel", "description": "A hard-working farmer dispossessed of his land by the friars. His transformation into a bandit illustrates how injustice breeds lawlessness.", "archetype": "The Dispossessed" }
+      ]
+    }
+  ],
+  "travels": [
+    {
+      "country": "Spain",
+      "city": "Madrid",
+      "years": "1882–1885",
+      "flag": "🇪🇸",
+      "purpose": "Medical Studies",
+      "detail": "Rizal enrolled at the Universidad Central de Madrid, earning his Licentiate in Medicine. He became involved with Filipino expatriates and wrote for La Solidaridad.",
+      "color": "#c0392b"
+    },
+    {
+      "country": "Germany",
+      "city": "Berlin",
+      "years": "1886–1887",
+      "flag": "🇩🇪",
+      "purpose": "Ophthalmology & Noli Publication",
+      "detail": "Rizal studied ophthalmology under Dr. Otto Becker and had Noli Me Tángere published in Berlin at his own expense.",
+      "color": "#2c3e50"
+    },
+    {
+      "country": "France",
+      "city": "Paris",
+      "years": "1885–1886",
+      "flag": "🇫🇷",
+      "purpose": "Advanced Ophthalmology",
+      "detail": "He trained under Dr. Louis de Wecker, one of Europe's greatest eye surgeons, further specializing in the craft he would use to restore his mother's sight.",
+      "color": "#2980b9"
+    },
+    {
+      "country": "United Kingdom",
+      "city": "London",
+      "years": "1888–1889",
+      "flag": "🇬🇧",
+      "purpose": "Research & Annotation",
+      "detail": "At the British Museum, Rizal annotated Antonio de Morga's Sucesos de las Islas Filipinas, aiming to prove that pre-colonial Filipinos had a rich civilization.",
+      "color": "#8e44ad"
+    },
+    {
+      "country": "Japan",
+      "city": "Tokyo",
+      "years": "1888",
+      "flag": "🇯🇵",
+      "purpose": "Cultural Exploration",
+      "detail": "Rizal spent time in Japan, fell briefly in love with O-Sei-San, and was captivated by Japanese culture, seeing parallels to Filipino resilience.",
+      "color": "#e74c3c"
+    },
+    {
+      "country": "Belgium",
+      "city": "Ghent",
+      "years": "1891",
+      "flag": "🇧🇪",
+      "purpose": "El Filibusterismo Publication",
+      "detail": "Rizal had El Filibusterismo printed in Ghent. Valentin Ventura financed the printing of the last few chapters when Rizal ran out of funds.",
+      "color": "#f39c12"
+    },
+    {
+      "country": "USA",
+      "city": "San Francisco",
+      "years": "1888",
+      "flag": "🇺🇸",
+      "purpose": "Transit & Observation",
+      "detail": "Rizal passed through the United States and documented the discrimination against Chinese immigrants, drawing parallels to colonial conditions in the Philippines.",
+      "color": "#27ae60"
+    },
+    {
+      "country": "Philippines",
+      "city": "Dapitan, Zamboanga",
+      "years": "1892–1896",
+      "flag": "🇵🇭",
+      "purpose": "Exile",
+      "detail": "Exiled by the Spanish government, Rizal spent four years in Dapitan. He practiced medicine, taught children, built infrastructure, and conducted scientific research.",
+      "color": "#1abc9c"
+    }
+  ],
+  "group": {
+    "section": "IT22S2",
+    "groupNumber": 5,
+    "courseName": "GEM 001 — Life and Works of Rizal",
+    "semester": "A.Y. 2025–2026",
+    "motto": "We don't just study Rizal. We build like him.",
+    "members": [
+      {
+        "name": "Harold Bermudez",
+        "role": "Lead Developer & Website Creator",
+        "description": "The sole architect behind this entire website. Built the data pipeline, UI, animations, and all dynamic JS logic from scratch.",
+        "skills": ["JavaScript", "Fetch API", "HTML5", "CSS3", "JSON", "Git"],
+        "emoji": "💻",
+        "color": "#C9A84C"
+      },
+      {
+        "name": "Fraise Abe",
+        "role": "Group Leader",
+        "description": "Founded and organized Group 5. Coordinated the team's research efforts and kept the project on track.",
+        "skills": ["Leadership", "Project Management", "Research", "Coordination"],
+        "emoji": "👑",
+        "color": "#8B2635"
+      },
+      {
+        "name": "Justin Hio",
+        "role": "Content Researcher",
+        "description": "Gathered and verified historical facts about Rizal's life, works, and travels used throughout the site.",
+        "skills": ["Research", "Fact-Checking", "Content Writing", "History"],
+        "emoji": "📖",
+        "color": "#1A3A5C"
+      },
+      {
+        "name": "Mark Daniel",
+        "role": "Content Researcher",
+        "description": "Contributed research on Rizal's literary works and characters, ensuring accuracy in every detail.",
+        "skills": ["Research", "Literature", "Writing", "Analysis"],
+        "emoji": "📝",
+        "color": "#4A7C59"
+      },
+      {
+        "name": "Renz Andrei Medrick Lim",
+        "role": "Content Researcher",
+        "description": "Researched Rizal's travels and timeline of life events featured in the Biography section.",
+        "skills": ["Research", "History", "Documentation", "Writing"],
+        "emoji": "🗺️",
+        "color": "#7B4F2E"
+      },
+      {
+        "name": "Tyler Hernandez",
+        "role": "Content Researcher",
+        "description": "Compiled data on Rizal's novels, themes, and major characters integrated into the Literary Works section.",
+        "skills": ["Research", "Literary Analysis", "Content Strategy", "Writing"],
+        "emoji": "🔍",
+        "color": "#5C3A7B"
+      }
+    ]
+  }
+}

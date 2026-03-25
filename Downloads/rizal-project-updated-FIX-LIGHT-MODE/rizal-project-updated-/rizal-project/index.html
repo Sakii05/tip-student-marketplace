@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>José Rizal — GEM 001 | Group 5 IT22S2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-brand">
+      <span class="nav-logo">⚜</span>
+      <span class="nav-title">Rizal<span class="accent">.</span></span>
+    </div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#biography" class="nav-link" data-page="biography">Biography</a></li>
+      <li><a href="#works" class="nav-link" data-page="works">Literary Works</a></li>
+      <li><a href="#travels" class="nav-link" data-page="travels">Travels</a></li>
+      <li><a href="#group" class="nav-link" data-page="group">Group 5</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+        <span class="theme-icon">🌙</span>
+      </button>
+      <button class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="home">
+    <div class="hero-grain"></div>
+    <div class="hero-pattern"></div>
+    <div class="hero-content">
+      <div class="hero-badge animate-in" style="--delay:0.1s">GEM 001 · Section IT22S2 · Group 5</div>
+      <h1 class="hero-name animate-in" style="--delay:0.2s">
+        <span class="hero-name-jose">José</span>
+        <span class="hero-name-rizal">Rizal</span>
+      </h1>
+      <p class="hero-years animate-in" style="--delay:0.3s">1861 — 1896</p>
+      <blockquote class="hero-quote animate-in" style="--delay:0.4s">
+        <p id="heroTagline"></p>
+        <cite id="heroAttribution"></cite>
+      </blockquote>
+      <div class="hero-stats animate-in" style="--delay:0.5s">
+        <div class="stat-item">
+          <span class="stat-number">22+</span>
+          <span class="stat-label">Languages</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number">2</span>
+          <span class="stat-label">Landmark Novels</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number">8+</span>
+          <span class="stat-label">Countries Visited</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number">35</span>
+          <span class="stat-label">Years of Life</span>
+        </div>
+      </div>
+      <div class="hero-actions animate-in" style="--delay:0.6s">
+        <a href="#biography" class="btn-primary">Explore His Life</a>
+        <button class="btn-secondary" id="factBtn">✦ Random Fact</button>
+      </div>
+    </div>
+    <div class="hero-scroll-indicator">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ===== FACT TOAST ===== -->
+  <div class="fact-toast" id="factToast">
+    <div class="fact-toast-inner">
+      <span class="fact-icon">✦</span>
+      <p id="factText"></p>
+      <button class="fact-close" id="factClose">✕</button>
+    </div>
+  </div>
+
+  <!-- ===== SEARCH BAR ===== -->
+  <div class="search-wrapper">
+    <div class="search-container">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="searchInput" class="search-input" placeholder="Search characters, events, places, works..." />
+      <span class="search-clear" id="searchClear">✕</span>
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
+
+    <!-- BIOGRAPHY SECTION -->
+    <section class="section" id="biography">
+      <div class="section-header">
+        <div class="section-number">01</div>
+        <div class="section-title-block">
+          <h2 class="section-title">Biography</h2>
+          <p class="section-subtitle">The life of the Great Malayan</p>
+        </div>
+      </div>
+
+      <div class="bio-overview" id="bioOverview"></div>
+
+      <div class="bio-meta-grid" id="bioMeta"></div>
+
+      <div class="timeline-section">
+        <h3 class="subsection-title">Life Timeline</h3>
+        <div class="timeline" id="timeline"></div>
+      </div>
+
+      <div class="languages-section">
+        <h3 class="subsection-title">Languages & Expertise</h3>
+        <div class="tags-grid" id="languagesTags"></div>
+      </div>
+
+      <div class="gallery-section">
+        <h3 class="subsection-title">Historical Gallery</h3>
+        <div class="gallery-grid" id="galleryGrid"></div>
+      </div>
+    </section>
+
+    <!-- WORKS SECTION -->
+    <section class="section" id="works">
+      <div class="section-header">
+        <div class="section-number">02</div>
+        <div class="section-title-block">
+          <h2 class="section-title">Literary Works</h2>
+          <p class="section-subtitle">The pen that shook an empire</p>
+        </div>
+      </div>
+      <div id="worksContainer"></div>
+    </section>
+
+    <!-- TRAVELS SECTION -->
+    <section class="section" id="travels">
+      <div class="section-header">
+        <div class="section-number">03</div>
+        <div class="section-title-block">
+          <h2 class="section-title">Travels</h2>
+          <p class="section-subtitle">A hero who wandered the world to free his nation</p>
+        </div>
+      </div>
+      <div class="travels-grid" id="travelsGrid"></div>
+    </section>
+
+    <!-- GROUP SECTION -->
+    <section class="section" id="group">
+      <div class="section-header">
+        <div class="section-number">04</div>
+        <div class="section-title-block">
+          <h2 class="section-title">Group 5</h2>
+          <p class="section-subtitle">The Devs — IT22S2</p>
+        </div>
+      </div>
+      <div class="group-banner" id="groupBanner"></div>
+      <div class="team-grid" id="teamGrid"></div>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">⚜ Rizal<span class="accent">.</span></div>
+      <p class="footer-text">GEM 001 — Life and Works of Rizal · Section IT22S2 · Group 5</p>
+      <p class="footer-sub">Built with vanilla HTML, CSS & JS · All data served from <code>data.json</code></p>
+      <p class="footer-quote">"The youth is the hope of our fatherland." — José Rizal</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
