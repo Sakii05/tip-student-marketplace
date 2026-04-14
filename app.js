@@ -363,6 +363,9 @@ function login(emailOrUser, password) {
 }
 
 function register(name, email, password, course) {
+  if (!email.toLowerCase().endsWith('@tip.edu.ph')) {
+    showToast('❌ Only @tip.edu.ph emails are allowed. Use your TIP email.', 'error'); return;
+  }
   if (password.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
   const result = DB.createUser(name, email, password, course);
   if (result.error) { showToast(result.error, 'error'); return; }
@@ -394,7 +397,7 @@ function updateAuthUI() {
     avatar.textContent = session.avatar || session.name?.charAt(0).toUpperCase() || '?';
   }
 
-  // Mobile avatar icon — show user initial in bottom nav circle
+  // Mobile avatar icon
   document.querySelectorAll('.mobile-avatar-icon').forEach(el => {
     el.textContent = session?.avatar || session?.name?.charAt(0).toUpperCase() || '◉';
   });
@@ -558,8 +561,12 @@ function openProductModal(id) {
           ${isOwner
             ? `<button class="btn btn-gold" onclick="openEditProductModal('${esc(id)}');closeModal('product-modal')">✏ Edit Listing</button>
                <button class="btn btn-danger" onclick="deleteOwnProduct('${esc(id)}');closeModal('product-modal')">🗑 Delete</button>`
-            : `<button class="btn btn-gold" onclick="startChatWithSeller('${esc(p.sellerId)}','${esc(p.sellerName)}','${esc(id)}');closeModal('product-modal')">💬 Message Seller</button>
-               <button class="btn btn-ghost" onclick="toggleWishlistById('${esc(id)}')">☆ Save</button>`
+            : session
+              ? `<button class="btn btn-gold" onclick="handleBuyNow('${esc(id)}','${esc(p.sellerId)}','${esc(p.sellerName)}')">🛒 Buy Now</button>
+                 <button class="btn btn-ghost" style="border-color:var(--border-gold);color:var(--gold)" onclick="startChatWithSeller('${esc(p.sellerId)}','${esc(p.sellerName)}','${esc(id)}');closeModal('product-modal')">💬 Message Seller</button>
+                 <button class="btn btn-ghost" onclick="toggleWishlistById('${esc(id)}')">☆ Save</button>`
+              : `<button class="btn btn-gold open-auth" onclick="closeModal('product-modal')">🔑 Sign In to Buy</button>
+                 <button class="btn btn-ghost open-auth" onclick="closeModal('product-modal')">💬 Sign In to Message</button>`
           }
         </div>
       </div>
@@ -569,6 +576,31 @@ function openProductModal(id) {
 }
 
 window.openProductModal = openProductModal;
+
+/* ── Buy Now handler ────────────────────────────────────────── */
+function handleBuyNow(productId, sellerId, sellerName) {
+  const p = DB.getProductById(productId);
+  if (!p) return;
+
+  closeModal('product-modal');
+
+  showConfirm(
+    '🛒 Confirm Purchase Interest',
+    `You're interested in "${p.title}" for ${fmt(p.price)}.\n\nThis will open a chat with the seller to arrange payment and meetup on campus.`,
+    () => {
+      startChatWithSeller(sellerId, sellerName, productId);
+      setTimeout(() => {
+        const input = $('chat-input');
+        if (input) {
+          input.value = `Hi! I'm interested in buying your "${p.title}" for ${fmt(p.price)}. Is it still available?`;
+          input.focus();
+        }
+        showToast('💬 Chat opened — confirm details with the seller!', 'success');
+      }, 300);
+    }
+  );
+}
+window.handleBuyNow = handleBuyNow;
 
 /* ════════════════════════════════════════════════════════════════
    10. UPLOAD / EDIT PRODUCT
