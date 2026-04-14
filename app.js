@@ -364,7 +364,7 @@ function login(emailOrUser, password) {
 
 function register(name, email, password, course) {
   if (!email.toLowerCase().endsWith('@tip.edu.ph')) {
-    showToast('Only TIP email addresses (@tip.edu.ph) are allowed.', 'error'); return;
+    showToast('Only @tip.edu.ph email addresses are allowed.', 'error'); return;
   }
   if (password.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
   const result = DB.createUser(name, email, password, course);

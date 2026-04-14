@@ -270,18 +270,19 @@ a { text-decoration: none; color: inherit; }
 .bottom-nav-item .nav-icon { font-size: 1.3rem; }
 .bottom-nav-item.active { color: var(--gold); }
 
-/* Mobile bottom nav avatar circle */
+/* Profile avatar circle in bottom nav */
 .mobile-avatar-icon {
-  display: flex !important;
-  width: 28px; height: 28px;
+  display: inline-flex !important;
+  width: 26px; height: 26px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--gold), var(--gold-dark));
   color: #000 !important;
   font-family: var(--font-display);
-  font-size: 0.78rem !important;
+  font-size: 0.75rem !important;
   font-weight: 800;
   align-items: center; justify-content: center;
   line-height: 1;
+  flex-shrink: 0;
 }
 
 .bottom-nav-item.sell-btn {
@@ -1375,10 +1376,9 @@ a { text-decoration: none; color: inherit; }
   .nav-links { display: none; }
   .navbar-search { display: none; }
   .navbar-actions .nav-btn { display: none; }
-  .avatar-btn { display: flex !important; }
-  .navbar-actions .logout-btn { display: none; }
-  /* Hide avatar from top navbar on mobile — use bottom nav instead */
+  /* Hide avatar & logout from top navbar on mobile — bottom nav handles it */
   .navbar-actions .avatar-btn { display: none !important; }
+  .navbar-actions .logout-btn { display: none; }
 
   .products-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; padding: 0 12px 120px; }
   .card-image-placeholder, .product-card .card-image { height: 130px; }
