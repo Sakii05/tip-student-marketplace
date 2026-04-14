@@ -226,12 +226,18 @@ a { text-decoration: none; color: inherit; }
   background: linear-gradient(135deg, var(--gold), var(--gold-dark));
   border: none;
   color: #000;
-  font-weight: 700;
+  font-weight: 800;
   font-family: var(--font-display);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all var(--transition);
   box-shadow: 0 0 0 2px transparent;
+  /* Center the letter */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  text-align: center;
 }
 .avatar-btn:hover { box-shadow: 0 0 0 3px var(--gold-glow); transform: scale(1.05); }
 
@@ -250,49 +256,66 @@ a { text-decoration: none; color: inherit; }
 .bottom-nav-inner {
   display: flex;
   align-items: center;
+  justify-content: space-around;
   height: 100%;
-  padding: 0 8px;
+  padding: 0 4px;
 }
 .bottom-nav-item {
   flex: 1;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  gap: 4px;
+  gap: 5px;
   background: none; border: none;
   color: var(--text-muted);
   font-family: var(--font-body);
-  font-size: 0.68rem;
+  font-size: 0.65rem;
+  font-weight: 500;
   cursor: pointer;
   transition: color var(--transition);
-  padding: 4px;
+  padding: 6px 2px;
   border-radius: var(--radius-md);
+  min-width: 0;
 }
-.bottom-nav-item .nav-icon { font-size: 1.3rem; }
+.bottom-nav-item .nav-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  height: 28px; width: 28px;
+}
 .bottom-nav-item.active { color: var(--gold); }
+.bottom-nav-item.active .nav-icon { color: var(--gold); }
 
 /* Profile avatar circle in bottom nav */
 .mobile-avatar-icon {
-  display: inline-flex !important;
-  width: 26px; height: 26px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  width: 28px !important; height: 28px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark)) !important;
   color: #000 !important;
-  font-family: var(--font-display);
-  font-size: 0.75rem !important;
-  font-weight: 800;
-  align-items: center; justify-content: center;
-  line-height: 1;
+  font-family: var(--font-display) !important;
+  font-size: 0.78rem !important;
+  font-weight: 800 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  text-align: center !important;
   flex-shrink: 0;
 }
 
 .bottom-nav-item.sell-btn {
-  flex: 0 0 52px; height: 52px;
+  flex: 0 0 54px;
+  width: 54px; height: 54px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--gold), var(--gold-dark));
   color: #000;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  box-shadow: 0 4px 20px rgba(212,175,55,0.4);
+  box-shadow: 0 4px 20px rgba(212,175,55,0.45);
+  padding: 0;
+  gap: 0;
+  /* Lift it above the bar */
+  margin-bottom: 16px;
+  border: 3px solid var(--bg-base);
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1376,7 +1399,7 @@ a { text-decoration: none; color: inherit; }
   .nav-links { display: none; }
   .navbar-search { display: none; }
   .navbar-actions .nav-btn { display: none; }
-  /* Hide avatar & logout from top navbar on mobile — bottom nav handles it */
+  /* Hide avatar from top navbar on mobile — bottom nav handles profile */
   .navbar-actions .avatar-btn { display: none !important; }
   .navbar-actions .logout-btn { display: none; }
 

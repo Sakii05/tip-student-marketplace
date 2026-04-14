@@ -363,9 +363,6 @@ function login(emailOrUser, password) {
 }
 
 function register(name, email, password, course) {
-  if (!email.toLowerCase().endsWith('@tip.edu.ph')) {
-    showToast('Only @tip.edu.ph email addresses are allowed.', 'error'); return;
-  }
   if (password.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
   const result = DB.createUser(name, email, password, course);
   if (result.error) { showToast(result.error, 'error'); return; }
@@ -397,7 +394,7 @@ function updateAuthUI() {
     avatar.textContent = session.avatar || session.name?.charAt(0).toUpperCase() || '?';
   }
 
-  // Mobile avatar icon
+  // Mobile avatar icon — show user initial in bottom nav circle
   document.querySelectorAll('.mobile-avatar-icon').forEach(el => {
     el.textContent = session?.avatar || session?.name?.charAt(0).toUpperCase() || '◉';
   });
