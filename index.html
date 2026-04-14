@@ -348,8 +348,12 @@
       </div>
       <form class="auth-form active" id="login-form">
         <div class="form-group">
-          <label class="form-label" for="login-email">TIP Email or Username</label>
-          <input class="form-input" type="text" id="login-email" placeholder="yourname@tip.edu.ph or admin" required autocomplete="username">
+          <label class="form-label" for="login-email">TIP Student Username</label>
+          <div class="email-suffix-wrap">
+            <input class="form-input email-prefix-input" type="text" id="login-email" placeholder="yourname" required autocomplete="username">
+            <span class="email-suffix">@tip.edu.ph</span>
+          </div>
+          <span style="font-size:0.72rem;color:var(--text-muted);margin-top:3px;display:block">Type <strong>admin</strong> for admin access</span>
         </div>
         <div class="form-group">
           <label class="form-label" for="login-password">Password</label>
@@ -359,9 +363,9 @@
         <div class="divider">demo accounts</div>
         <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px;font-size:0.78rem;color:var(--text-secondary);line-height:2">
           🔑 <strong style="color:var(--gold)">admin</strong> / admin123 → Admin Dashboard<br>
-          📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="96fbf7e4fff7d6e2ffe6b8f3f2e3b8e6fe">[email&#160;protected]</a> / password123<br>
-          📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a2c8d7c3cce2d6cbd28cc7c6d78cd2ca">[email&#160;protected]</a> / password123<br>
-          📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ea8b848baa9e839ac48f8e9fc49a82">[email&#160;protected]</a> / password123
+          📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="254844574c4465514c550b4041500b554d">[email&#160;protected]</a> / password123<br>
+          📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fa908f9b94ba8e938ad49f9e8fd48a92">[email&#160;protected]</a> / password123<br>
+          📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1e7f707f5e6a776e307b7a6b306e76">[email&#160;protected]</a> / password123
         </div>
       </form>
       <form class="auth-form" id="register-form">
@@ -371,9 +375,11 @@
             <input class="form-input" type="text" id="reg-name" placeholder="Juan Dela Cruz" required>
           </div>
           <div class="form-group">
-            <label class="form-label" for="reg-email">TIP Email *</label>
-            <input class="form-input" type="email" id="reg-email" placeholder="yourname@tip.edu.ph" pattern=".+@tip\.edu\.ph" title="Must be a TIP email: yourname@tip.edu.ph" required>
-            <span style="font-size:0.72rem;color:var(--text-muted);margin-top:3px;display:block">⚠ Must end with @tip.edu.ph</span>
+            <label class="form-label" for="reg-email">TIP Student Username *</label>
+            <div class="email-suffix-wrap">
+              <input class="form-input email-prefix-input" type="text" id="reg-email" placeholder="yourname" required autocomplete="username">
+              <span class="email-suffix">@tip.edu.ph</span>
+            </div>
           </div>
         </div>
         <div class="form-group">

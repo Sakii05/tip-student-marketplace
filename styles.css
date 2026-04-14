@@ -226,18 +226,12 @@ a { text-decoration: none; color: inherit; }
   background: linear-gradient(135deg, var(--gold), var(--gold-dark));
   border: none;
   color: #000;
-  font-weight: 800;
+  font-weight: 700;
   font-family: var(--font-display);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: all var(--transition);
   box-shadow: 0 0 0 2px transparent;
-  /* Center the letter */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  text-align: center;
 }
 .avatar-btn:hover { box-shadow: 0 0 0 3px var(--gold-glow); transform: scale(1.05); }
 
@@ -256,66 +250,33 @@ a { text-decoration: none; color: inherit; }
 .bottom-nav-inner {
   display: flex;
   align-items: center;
-  justify-content: space-around;
   height: 100%;
-  padding: 0 4px;
+  padding: 0 8px;
 }
 .bottom-nav-item {
   flex: 1;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  gap: 5px;
+  gap: 4px;
   background: none; border: none;
   color: var(--text-muted);
   font-family: var(--font-body);
-  font-size: 0.65rem;
-  font-weight: 500;
+  font-size: 0.68rem;
   cursor: pointer;
   transition: color var(--transition);
-  padding: 6px 2px;
+  padding: 4px;
   border-radius: var(--radius-md);
-  min-width: 0;
 }
-.bottom-nav-item .nav-icon {
-  font-size: 1.25rem;
-  line-height: 1;
-  display: flex; align-items: center; justify-content: center;
-  height: 28px; width: 28px;
-}
+.bottom-nav-item .nav-icon { font-size: 1.3rem; }
 .bottom-nav-item.active { color: var(--gold); }
-.bottom-nav-item.active .nav-icon { color: var(--gold); }
-
-/* Profile avatar circle in bottom nav */
-.mobile-avatar-icon {
-  width: 28px !important; height: 28px !important;
-  border-radius: 50% !important;
-  background: linear-gradient(135deg, var(--gold), var(--gold-dark)) !important;
-  color: #000 !important;
-  font-family: var(--font-display) !important;
-  font-size: 0.78rem !important;
-  font-weight: 800 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  line-height: 1 !important;
-  text-align: center !important;
-  flex-shrink: 0;
-}
-
 .bottom-nav-item.sell-btn {
-  flex: 0 0 54px;
-  width: 54px; height: 54px;
+  flex: 0 0 52px; height: 52px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--gold), var(--gold-dark));
   color: #000;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 700;
-  box-shadow: 0 4px 20px rgba(212,175,55,0.45);
-  padding: 0;
-  gap: 0;
-  /* Lift it above the bar */
-  margin-bottom: 16px;
-  border: 3px solid var(--bg-base);
+  box-shadow: 0 4px 20px rgba(212,175,55,0.4);
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -709,6 +670,50 @@ a { text-decoration: none; color: inherit; }
 .form-textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
 
 .char-count { font-size: 0.72rem; color: var(--text-muted); text-align: right; margin-top: 2px; }
+
+/* ── Email username + suffix input ──────────────────────────── */
+.email-suffix-wrap {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-input);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.email-suffix-wrap:focus-within {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-glow);
+}
+.email-prefix-input {
+  flex: 1;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  padding: 11px 0 11px 14px !important;
+  min-width: 0;
+}
+.email-prefix-input:focus {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+.email-suffix {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  background: rgba(212,175,55,0.08);
+  border-left: 1px solid var(--border);
+  color: var(--gold);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: var(--font-display);
+  white-space: nowrap;
+  user-select: none;
+  flex-shrink: 0;
+}
 
 .price-input-wrap { position: relative; }
 .price-prefix {
@@ -1399,8 +1404,7 @@ a { text-decoration: none; color: inherit; }
   .nav-links { display: none; }
   .navbar-search { display: none; }
   .navbar-actions .nav-btn { display: none; }
-  /* Hide avatar from top navbar on mobile — bottom nav handles profile */
-  .navbar-actions .avatar-btn { display: none !important; }
+  .avatar-btn { display: flex !important; }
   .navbar-actions .logout-btn { display: none; }
 
   .products-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; padding: 0 12px 120px; }

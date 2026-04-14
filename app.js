@@ -352,11 +352,13 @@ function login(emailOrUser, password) {
     loginAsAdmin();
     return;
   }
-  /* Block non-TIP emails */
-  if (!emailOrUser.trim().toLowerCase().endsWith('@tip.edu.ph')) {
+  /* Auto-suffix if no @ present */
+  const email = emailOrUser.includes('@') ? emailOrUser.trim().toLowerCase() : emailOrUser.trim().toLowerCase() + '@tip.edu.ph';
+  /* Block non-TIP */
+  if (!email.endsWith('@tip.edu.ph')) {
     showToast('❌ Only @tip.edu.ph accounts are allowed.', 'error'); return;
   }
-  const user = DB.findUser(emailOrUser, password);
+  const user = DB.findUser(email, password);
   if (!user) { showToast('Invalid email or password.', 'error'); return; }
   isAdmin = false;
   DB.saveSession(user);
@@ -367,9 +369,10 @@ function login(emailOrUser, password) {
 }
 
 function register(name, email, password, course) {
-  const cleanEmail = email.trim().toLowerCase();
+  /* Auto-suffix safety net */
+  const cleanEmail = (email.includes('@') ? email : email + '@tip.edu.ph').trim().toLowerCase();
   if (!cleanEmail.endsWith('@tip.edu.ph')) {
-    showToast('❌ Only @tip.edu.ph emails are accepted. Use your TIP school email.', 'error'); return;
+    showToast('❌ Only @tip.edu.ph emails are accepted.', 'error'); return;
   }
   if (password.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
   const result = DB.createUser(name, cleanEmail, password, course);
@@ -1073,21 +1076,25 @@ function setupEventListeners() {
   /* ── Login form ─────────────────────────────────────────────── */
   $('login-form')?.addEventListener('submit', e => {
     e.preventDefault();
-    login($('login-email').value.trim(), $('login-password').value);
+    const rawInput = $('login-email').value.trim();
+    /* Admin shortcut — no suffix needed */
+    const emailOrUser = rawInput.toLowerCase() === 'admin'
+      ? rawInput
+      : rawInput.includes('@') ? rawInput : rawInput + '@tip.edu.ph';
+    login(emailOrUser, $('login-password').value);
   });
 
   /* ── Register form ──────────────────────────────────────────── */
   $('register-form')?.addEventListener('submit', e => {
     e.preventDefault();
-    const emailVal = $('reg-email').value.trim().toLowerCase();
-    if (!emailVal.endsWith('@tip.edu.ph')) {
-      showToast('❌ Only @tip.edu.ph emails are accepted.', 'error');
-      $('reg-email').style.borderColor = 'var(--danger)';
-      $('reg-email').focus();
-      return;
+    const rawUsername = $('reg-email').value.trim().toLowerCase();
+    if (!rawUsername) { showToast('Please enter your TIP username.', 'error'); return; }
+    if (rawUsername.includes('@')) {
+      showToast('❌ Enter only your username — the @tip.edu.ph is added automatically.', 'error');
+      $('reg-email').focus(); return;
     }
-    $('reg-email').style.borderColor = '';
-    register($('reg-name').value.trim(), emailVal, $('reg-password').value, $('reg-course')?.value.trim() || '');
+    const fullEmail = rawUsername + '@tip.edu.ph';
+    register($('reg-name').value.trim(), fullEmail, $('reg-password').value, $('reg-course')?.value.trim() || '');
   });
 
   /* ── Filter chips ───────────────────────────────────────────── */
@@ -1202,13 +1209,12 @@ function setupEventListeners() {
 function init() {
   seedMockData();
 
-  /* ── Purge any non-TIP accounts from localStorage ───────────── */
+  /* ── Purge old non-TIP accounts from localStorage ───────────── */
   const session = getSession();
   if (session && !session.isAdmin && !session.email?.toLowerCase().endsWith('@tip.edu.ph')) {
     DB.saveSession(null);
-    showToast('⚠ Your account used a non-TIP email and has been removed. Please register with @tip.edu.ph.', 'error');
+    showToast('⚠ Non-TIP account removed. Please register with @tip.edu.ph.', 'error');
   }
-  /* Remove all stored non-TIP users */
   const cleanUsers = DB.getUsers().filter(u => u.email?.toLowerCase().endsWith('@tip.edu.ph'));
   DB.saveUsers(cleanUsers);
 
@@ -1222,7 +1228,6 @@ function init() {
 
   updateAuthUI();
 
-  /* Message badge (stub) */
   const badge = $('msg-badge');
   if (badge) badge.classList.add('hidden');
 }
