@@ -945,7 +945,6 @@ function renderAdminDashboard() {
 
   /* Users table */
   const usersBody = $('admin-users-body');
-  const session = getSession();
   if (usersBody) {
     usersBody.innerHTML = users.map(u => {
       const userListings = products.filter(p => p.sellerId === u.id).length;
@@ -959,9 +958,7 @@ function renderAdminDashboard() {
         <td>
           ${isMockUser
             ? `<span style="font-size:0.72rem;color:var(--text-muted)">Demo</span>`
-            : session && session.isAdmin
-              ? `<button class="btn btn-danger" style="padding:5px 12px;font-size:0.75rem" onclick="adminDeleteUser('${esc(u.id)}')">🗑 Delete</button>`
-              : `<span style="font-size:0.72rem;color:var(--text-muted)">—</span>`
+            : `<button class="btn btn-danger" style="padding:5px 12px;font-size:0.75rem;cursor:pointer" onclick="adminDeleteUser('${esc(u.id)}')">🗑 Delete</button>`
           }
         </td>
       </tr>`;
