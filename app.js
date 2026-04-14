@@ -352,13 +352,7 @@ function login(emailOrUser, password) {
     loginAsAdmin();
     return;
   }
-  /* Auto-suffix if no @ present */
-  const email = emailOrUser.includes('@') ? emailOrUser.trim().toLowerCase() : emailOrUser.trim().toLowerCase() + '@tip.edu.ph';
-  /* Block non-TIP */
-  if (!email.endsWith('@tip.edu.ph')) {
-    showToast('❌ Only @tip.edu.ph accounts are allowed.', 'error'); return;
-  }
-  const user = DB.findUser(email, password);
+  const user = DB.findUser(emailOrUser, password);
   if (!user) { showToast('Invalid email or password.', 'error'); return; }
   isAdmin = false;
   DB.saveSession(user);
@@ -369,13 +363,8 @@ function login(emailOrUser, password) {
 }
 
 function register(name, email, password, course) {
-  /* Auto-suffix safety net */
-  const cleanEmail = (email.includes('@') ? email : email + '@tip.edu.ph').trim().toLowerCase();
-  if (!cleanEmail.endsWith('@tip.edu.ph')) {
-    showToast('❌ Only @tip.edu.ph emails are accepted.', 'error'); return;
-  }
   if (password.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
-  const result = DB.createUser(name, cleanEmail, password, course);
+  const result = DB.createUser(name, email, password, course);
   if (result.error) { showToast(result.error, 'error'); return; }
   isAdmin = false;
   DB.saveSession(result.user);
@@ -959,14 +948,21 @@ function renderAdminDashboard() {
   if (usersBody) {
     usersBody.innerHTML = users.map(u => {
       const userListings = products.filter(p => p.sellerId === u.id).length;
+      const isMockUser = ['u_maria','u_juan','u_ana'].includes(u.id);
       return `<tr>
         <td><strong>${esc(u.name)}</strong></td>
         <td style="color:var(--text-secondary)">${esc(u.email)}</td>
         <td style="color:var(--text-secondary)">${esc(u.course || '—')}</td>
         <td style="color:var(--text-muted)">${timeAgo(u.joinedAt)}</td>
         <td><span class="badge badge-category">${userListings}</span></td>
+        <td>
+          ${isMockUser
+            ? `<span style="font-size:0.72rem;color:var(--text-muted)">Demo</span>`
+            : `<button class="btn btn-danger" style="padding:5px 12px;font-size:0.75rem" onclick="adminDeleteUser('${esc(u.id)}')">🗑 Delete</button>`
+          }
+        </td>
       </tr>`;
-    }).join('') || `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:24px">No users yet</td></tr>`;
+    }).join('') || `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px">No users yet</td></tr>`;
   }
 }
 
@@ -1015,6 +1011,40 @@ function adminEditProduct(id) {
   openEditProductModal(id);
 }
 window.adminEditProduct = adminEditProduct;
+
+/* ── Delete User ────────────────────────────────────────────── */
+function adminDeleteUser(userId) {
+  const users = DB.getUsers();
+  const user  = users.find(u => u.id === userId);
+  if (!user) return;
+
+  showConfirm(
+    '🗑 Delete User',
+    `Delete "${user.name}" (${user.email})? This will also remove all their listings and messages. This cannot be undone.`,
+    () => {
+      /* Remove user */
+      DB.saveUsers(users.filter(u => u.id !== userId));
+
+      /* Remove their listings */
+      DB.saveProducts(DB.getProducts().filter(p => p.sellerId !== userId));
+
+      /* Remove their messages */
+      DB.saveMessages(DB.getMessages().filter(m => m.senderId !== userId && m.receiverId !== userId));
+
+      /* Log them out if they're currently signed in */
+      const session = DB.getSession();
+      if (session && session.id === userId) {
+        DB.saveSession(null);
+        isAdmin = false;
+        updateAuthUI();
+      }
+
+      renderAdminDashboard();
+      showToast(`User "${user.name}" deleted successfully.`, 'success');
+    }
+  );
+}
+window.adminDeleteUser = adminDeleteUser;
 
 /* ════════════════════════════════════════════════════════════════
    15. MODALS
@@ -1076,25 +1106,13 @@ function setupEventListeners() {
   /* ── Login form ─────────────────────────────────────────────── */
   $('login-form')?.addEventListener('submit', e => {
     e.preventDefault();
-    const rawInput = $('login-email').value.trim();
-    /* Admin shortcut — no suffix needed */
-    const emailOrUser = rawInput.toLowerCase() === 'admin'
-      ? rawInput
-      : rawInput.includes('@') ? rawInput : rawInput + '@tip.edu.ph';
-    login(emailOrUser, $('login-password').value);
+    login($('login-email').value.trim(), $('login-password').value);
   });
 
   /* ── Register form ──────────────────────────────────────────── */
   $('register-form')?.addEventListener('submit', e => {
     e.preventDefault();
-    const rawUsername = $('reg-email').value.trim().toLowerCase();
-    if (!rawUsername) { showToast('Please enter your TIP username.', 'error'); return; }
-    if (rawUsername.includes('@')) {
-      showToast('❌ Enter only your username — the @tip.edu.ph is added automatically.', 'error');
-      $('reg-email').focus(); return;
-    }
-    const fullEmail = rawUsername + '@tip.edu.ph';
-    register($('reg-name').value.trim(), fullEmail, $('reg-password').value, $('reg-course')?.value.trim() || '');
+    register($('reg-name').value.trim(), $('reg-email').value.trim(), $('reg-password').value, $('reg-course')?.value.trim() || '');
   });
 
   /* ── Filter chips ───────────────────────────────────────────── */
@@ -1208,26 +1226,17 @@ function setupEventListeners() {
 
 function init() {
   seedMockData();
-
-  /* ── Purge old non-TIP accounts from localStorage ───────────── */
-  const session = getSession();
-  if (session && !session.isAdmin && !session.email?.toLowerCase().endsWith('@tip.edu.ph')) {
-    DB.saveSession(null);
-    showToast('⚠ Non-TIP account removed. Please register with @tip.edu.ph.', 'error');
-  }
-  const cleanUsers = DB.getUsers().filter(u => u.email?.toLowerCase().endsWith('@tip.edu.ph'));
-  DB.saveUsers(cleanUsers);
-
   setupEventListeners();
   setupUploadForm();
 
   /* Restore session state */
-  const activeSession = getSession();
-  if (activeSession?.isAdmin) { isAdmin = true; navigateTo('admin'); }
+  const session = getSession();
+  if (session?.isAdmin) { isAdmin = true; navigateTo('admin'); }
   else { navigateTo('home'); }
 
   updateAuthUI();
 
+  /* Message badge (stub) */
   const badge = $('msg-badge');
   if (badge) badge.classList.add('hidden');
 }
