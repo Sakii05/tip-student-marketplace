@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TIP Marketplace — Student Buy & Sell</title>
+  <meta name="description" content="The official student marketplace for Technological Institute of the Philippines.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ══ TOAST CONTAINER ══════════════════════════════════════════ -->
+<div id="toast-container"></div>
+
+<!-- ══ NAVBAR ═══════════════════════════════════════════════════ -->
+<nav class="navbar" id="main-navbar">
+  <a class="navbar-brand" href="#" data-page="home">
+    <div class="brand-icon">◈</div>
+    <span class="brand-text">TIP<span>Market</span></span>
+  </a>
+
+  <div class="nav-links">
+    <a href="#" class="nav-link active" data-page="home">Browse</a>
+    <a href="#" class="nav-link" data-page="chat">Messages <span class="msg-badge hidden" id="msg-badge">0</span></a>
+    <a href="#" class="nav-link" data-page="about">About</a>
+  </div>
+
+  <div class="navbar-search">
+    <span class="search-icon">⌕</span>
+    <input type="search" id="nav-search" placeholder="Search listings…" autocomplete="off">
+  </div>
+
+  <div class="navbar-actions">
+    <button class="nav-btn nav-btn-ghost open-auth guest-only">Sign In</button>
+    <button class="nav-btn nav-btn-gold open-auth guest-only">Join Free</button>
+    <button class="nav-btn nav-btn-gold hidden auth-only" data-page="upload">+ Sell</button>
+    <button class="avatar-btn hidden auth-only" data-page="profile" id="nav-avatar" title="My Profile">?</button>
+    <button class="nav-btn nav-btn-ghost hidden auth-only logout-btn">Sign Out</button>
+  </div>
+</nav>
+
+<!-- ══ BOTTOM NAV (mobile) ══════════════════════════════════════ -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bottom-nav-item active" data-page="home"><span class="nav-icon">⊞</span><span>Browse</span></button>
+    <button class="bottom-nav-item" data-page="chat"><span class="nav-icon">◎</span><span>Messages</span></button>
+    <button class="bottom-nav-item sell-btn auth-only hidden" data-page="upload">＋</button>
+    <button class="bottom-nav-item open-auth guest-only"><span class="nav-icon">◉</span><span>Sign In</span></button>
+    <button class="bottom-nav-item auth-only hidden" data-page="profile"><span class="nav-icon mobile-avatar-icon">◉</span><span>Profile</span></button>
+    <button class="bottom-nav-item" data-page="about"><span class="nav-icon">◌</span><span>About</span></button>
+  </div>
+</nav>
+
+<!-- ══ PAGE WRAPPER ═════════════════════════════════════════════ -->
+<div class="page-wrapper">
+
+  <!-- ══ HOME ══════════════════════════════════════════════════ -->
+  <section id="page-home" class="page-section active">
+
+    <div class="hero">
+      <div class="hero-eyebrow">✦ TIP Official Student Marketplace</div>
+      <h1>Trade Smart with<br><span class="highlight">Fellow TIPians</span></h1>
+      <p class="hero-sub">The trusted platform for Technological Institute of the Philippines students to exchange textbooks, electronics, uniforms, and more.</p>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-value" id="stat-listings">0</span><span class="stat-label">Active Listings</span></div>
+        <div class="stat"><span class="stat-value" id="stat-users">0</span><span class="stat-label">Students</span></div>
+        <div class="stat"><span class="stat-value" id="stat-sold">18</span><span class="stat-label">Items Sold</span></div>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-chip active" data-category="All">All</button>
+      <button class="filter-chip" data-category="Books">📚 Books</button>
+      <button class="filter-chip" data-category="Electronics">💻 Electronics</button>
+      <button class="filter-chip" data-category="Notes">📝 Notes</button>
+      <button class="filter-chip" data-category="Supplies">🖊 Supplies</button>
+      <button class="filter-chip" data-category="Clothing">👕 Clothing</button>
+      <button class="filter-chip" data-category="Other">📦 Other</button>
+      <select id="sort-select" class="filter-select">
+        <option value="newest">Newest First</option>
+        <option value="price-asc">Price: Low → High</option>
+        <option value="price-desc">Price: High → Low</option>
+        <option value="oldest">Oldest First</option>
+      </select>
+    </div>
+
+    <div class="products-grid" id="products-grid">
+      <div class="empty-state"><div class="empty-icon">⏳</div><h3>Loading listings…</h3></div>
+    </div>
+
+  </section>
+
+  <!-- ══ PROFILE ════════════════════════════════════════════════ -->
+  <section id="page-profile" class="page-section">
+    <div class="profile-page">
+      <div class="profile-header" id="profile-header-info"></div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:24px">
+        <button class="btn btn-gold" data-page="upload">+ New Listing</button>
+      </div>
+      <div class="profile-tabs">
+        <button class="profile-tab active" data-tab="listings">My Listings</button>
+        <button class="profile-tab" data-tab="saved">Saved Items</button>
+        <button class="profile-tab" data-tab="edit">Edit Profile</button>
+      </div>
+      <div class="profile-tab-content active" id="profile-tab-listings">
+        <div id="my-listings-content"></div>
+      </div>
+      <div class="profile-tab-content" id="profile-tab-saved">
+        <div id="saved-content"></div>
+      </div>
+      <div class="profile-tab-content" id="profile-tab-edit">
+        <div class="upload-card" style="max-width:560px">
+          <h3 style="margin-bottom:20px">Edit Profile</h3>
+          <form id="edit-profile-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="edit-name">Full Name *</label>
+                <input class="form-input" type="text" id="edit-name" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="edit-email">Email</label>
+                <input class="form-input" type="email" id="edit-email" disabled style="opacity:0.5">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="edit-course">Course / Program</label>
+              <input class="form-input" type="text" id="edit-course" placeholder="e.g. BS Computer Science">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="edit-bio">Bio</label>
+              <textarea class="form-textarea" id="edit-bio" placeholder="Tell others about yourself…" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-gold">Save Changes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ CHAT ══════════════════════════════════════════════════ -->
+  <section id="page-chat" class="page-section">
+    <div class="chat-layout">
+      <div class="chat-sidebar" id="chat-sidebar">
+        <div class="chat-sidebar-header">
+          <h3>Messages</h3>
+          <input class="form-input" type="search" id="chat-search" placeholder="Search conversations…" style="font-size:0.8rem;margin-top:10px">
+        </div>
+        <div class="chat-list" id="chat-list"></div>
+      </div>
+      <div class="chat-main">
+        <div class="chat-header">
+          <div id="chat-header-content" style="display:flex;align-items:center;gap:12px">
+            <div style="font-size:1.5rem">◎</div>
+            <span style="color:var(--text-secondary);font-size:0.9rem">Select a conversation</span>
+          </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-empty" id="chat-empty">
+            <div class="chat-empty-icon">◎</div>
+            <p>Select a conversation to start chatting</p>
+            <p style="font-size:0.75rem;margin-top:4px">Message a seller from any product listing</p>
+          </div>
+        </div>
+        <div class="chat-input-area" id="chat-input-area" style="display:none">
+          <input class="chat-input" id="chat-input" type="text" placeholder="Type a message…" autocomplete="off">
+          <button class="chat-send-btn" id="chat-send-btn" title="Send">➤</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ UPLOAD ════════════════════════════════════════════════ -->
+  <section id="page-upload" class="page-section">
+    <div class="upload-page">
+      <h2 class="page-title">List an Item</h2>
+      <p class="page-subtitle">Fill in the details below to post your listing to the TIP Marketplace.</p>
+      <div class="upload-card">
+        <form id="upload-form">
+          <div class="form-group">
+            <label class="form-label">Product Image</label>
+            <div class="img-upload-zone" id="img-upload-zone">
+              <input type="file" id="product-image" accept="image/*">
+              <img class="img-preview" id="img-preview" alt="Preview">
+              <div class="upload-icon">📷</div>
+              <div class="upload-text">Click to upload or drag & drop</div>
+              <div class="upload-hint">PNG, JPG, WEBP — max 5MB</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="product-title">Title *</label>
+              <input class="form-input" type="text" id="product-title" placeholder="e.g. Calculus Textbook" required maxlength="100">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="product-category">Category *</label>
+              <select class="form-select" id="product-category" required>
+                <option value="">Select category…</option>
+                <option value="Books">📚 Books</option>
+                <option value="Electronics">💻 Electronics</option>
+                <option value="Notes">📝 Notes / Reviewers</option>
+                <option value="Supplies">🖊 School Supplies</option>
+                <option value="Clothing">👕 Clothing / Uniform</option>
+                <option value="Other">📦 Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="product-desc">Description *</label>
+            <textarea class="form-textarea" id="product-desc" rows="4" placeholder="Describe your item…" required maxlength="500" oninput="updateCharCount('desc-count',this,500)"></textarea>
+            <div class="char-count" id="desc-count">0 / 500</div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="product-price">Price (₱) *</label>
+              <div class="price-input-wrap"><span class="price-prefix">₱</span><input class="form-input" type="number" id="product-price" placeholder="0.00" min="1" step="0.01" required></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="product-condition">Condition *</label>
+              <select class="form-select" id="product-condition" required>
+                <option value="Like New">Like New</option>
+                <option value="Good" selected>Good</option>
+                <option value="Fair">Fair</option>
+                <option value="For Parts">For Parts</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-gold btn-full btn-lg" style="margin-top:8px">🚀 Post Listing</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ ADMIN DASHBOARD ═══════════════════════════════════════ -->
+  <section id="page-admin" class="page-section">
+    <div class="admin-page">
+      <div class="admin-header">
+        <div>
+          <h2 class="page-title" style="margin:0">Admin Dashboard</h2>
+          <p style="color:var(--gold);font-size:0.8rem;margin-top:4px">⚙ Platform Control Panel</p>
+        </div>
+        <button class="nav-btn nav-btn-ghost logout-btn">Sign Out</button>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="admin-stats-grid" id="admin-stats-grid">
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon">📦</div>
+          <div class="admin-stat-value" id="admin-total-listings">0</div>
+          <div class="admin-stat-label">Total Listings</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon">👥</div>
+          <div class="admin-stat-value" id="admin-total-users">0</div>
+          <div class="admin-stat-label">Active Users</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon">💬</div>
+          <div class="admin-stat-value" id="admin-total-messages">0</div>
+          <div class="admin-stat-label">Messages Sent</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon">📚</div>
+          <div class="admin-stat-value" id="admin-top-category">—</div>
+          <div class="admin-stat-label">Top Category</div>
+        </div>
+      </div>
+
+      <!-- Listings Table -->
+      <div class="admin-table-card">
+        <div class="admin-table-header">
+          <h3>All Listings</h3>
+          <input class="form-input" type="search" id="admin-search" placeholder="Search listings…" style="max-width:240px;font-size:0.82rem">
+        </div>
+        <div class="table-wrap">
+          <table class="admin-table" id="admin-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Seller</th>
+                <th>Posted</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Users Table -->
+      <div class="admin-table-card" style="margin-top:24px">
+        <div class="admin-table-header">
+          <h3>Registered Users</h3>
+        </div>
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Name</th><th>Email</th><th>Course</th><th>Joined</th><th>Listings</th></tr>
+            </thead>
+            <tbody id="admin-users-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ ABOUT ═════════════════════════════════════════════════ -->
+  <section id="page-about" class="page-section">
+    <div class="about-page">
+      <div class="about-hero">
+        <div class="tip-logo-text">TIP Market</div>
+        <h2>Built for TIPians, by TIPians</h2>
+        <p style="color:var(--text-secondary);max-width:560px;margin:16px auto 0;font-size:0.95rem">A peer-to-peer marketplace exclusively for students of the Technological Institute of the Philippines.</p>
+      </div>
+      <div class="about-cards">
+        <div class="about-card"><div class="about-card-icon">📚</div><h4>Textbooks &amp; Notes</h4><p style="color:var(--text-secondary);font-size:0.85rem;margin-top:8px">Save on expensive new editions. Buy and sell used textbooks and organized notes from fellow students.</p></div>
+        <div class="about-card"><div class="about-card-icon">💻</div><h4>Electronics</h4><p style="color:var(--text-secondary);font-size:0.85rem;margin-top:8px">Calculators, laptops, Arduino kits — find the tech you need at student-friendly prices.</p></div>
+        <div class="about-card"><div class="about-card-icon">🔒</div><h4>TIP-Exclusive</h4><p style="color:var(--text-secondary);font-size:0.85rem;margin-top:8px">All users register with their TIP email. Meet safely on campus.</p></div>
+        <div class="about-card"><div class="about-card-icon">💬</div><h4>Direct Messaging</h4><p style="color:var(--text-secondary);font-size:0.85rem;margin-top:8px">Chat directly with sellers to negotiate and arrange meetups.</p></div>
+        <div class="about-card"><div class="about-card-icon">₱</div><h4>No Fees</h4><p style="color:var(--text-secondary);font-size:0.85rem;margin-top:8px">100% free to list and buy. No commissions, no hidden charges.</p></div>
+        <div class="about-card"><div class="about-card-icon">🌟</div><h4>Community Trust</h4><p style="color:var(--text-secondary);font-size:0.85rem;margin-top:8px">Built on the TIP honor code — sellers are your fellow campus community members.</p></div>
+      </div>
+      <div style="text-align:center;margin-top:48px">
+        <p style="color:var(--text-muted);font-size:0.8rem">TIP Student Marketplace · Technological Institute of the Philippines · 2024<br>This is a student project. Data is stored locally in your browser.</p>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-wrapper -->
+
+<!-- ══ MODALS ════════════════════════════════════════════════════ -->
+
+<!-- Auth Modal -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Welcome to TIP Market</h3>
+      <button class="modal-close" onclick="closeModal('auth-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">Sign In</button>
+        <button class="auth-tab" data-tab="register">Create Account</button>
+      </div>
+      <form class="auth-form active" id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="login-email">TIP Email or Username</label>
+          <input class="form-input" type="text" id="login-email" placeholder="yourname@tip.edu.ph or admin" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <input class="form-input" type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-gold btn-full">Sign In</button>
+        <div class="divider">demo accounts</div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px;font-size:0.78rem;color:var(--text-secondary);line-height:2">
+          🔑 <strong style="color:var(--gold)">admin</strong> / admin123 → Admin Dashboard<br>
+          📧 maria@tip.edu.ph / password123<br>
+          📧 juan@tip.edu.ph / password123<br>
+          📧 ana@tip.edu.ph / password123
+        </div>
+      </form>
+      <form class="auth-form" id="register-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="reg-name">Full Name *</label>
+            <input class="form-input" type="text" id="reg-name" placeholder="Juan Dela Cruz" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-email">TIP Email *</label>
+            <input class="form-input" type="email" id="reg-email" placeholder="yourname@tip.edu.ph" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-course">Course / Program</label>
+          <input class="form-input" type="text" id="reg-course" placeholder="e.g. BS Computer Science">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-password">Password *</label>
+          <input class="form-input" type="password" id="reg-password" placeholder="Min. 6 characters" required autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn btn-gold btn-full">Create Account</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Product Detail Modal -->
+<div class="modal-overlay" id="product-modal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3 class="modal-title">Product Details</h3>
+      <button class="modal-close" onclick="closeModal('product-modal')">✕</button>
+    </div>
+    <div class="modal-body" id="product-modal-body"></div>
+  </div>
+</div>
+
+<!-- Edit Product Modal -->
+<div class="modal-overlay" id="edit-product-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Edit Listing</h3>
+      <button class="modal-close" onclick="closeModal('edit-product-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="edit-product-form">
+        <input type="hidden" id="edit-product-id">
+        <div class="form-group">
+          <label class="form-label" for="edit-product-title">Title *</label>
+          <input class="form-input" type="text" id="edit-product-title" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="edit-product-category">Category</label>
+            <select class="form-select" id="edit-product-category">
+              <option value="Books">📚 Books</option>
+              <option value="Electronics">💻 Electronics</option>
+              <option value="Notes">📝 Notes</option>
+              <option value="Supplies">🖊 Supplies</option>
+              <option value="Clothing">👕 Clothing</option>
+              <option value="Other">📦 Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-product-condition">Condition</label>
+            <select class="form-select" id="edit-product-condition">
+              <option value="Like New">Like New</option>
+              <option value="Good">Good</option>
+              <option value="Fair">Fair</option>
+              <option value="For Parts">For Parts</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="edit-product-desc">Description *</label>
+          <textarea class="form-textarea" id="edit-product-desc" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="edit-product-price">Price (₱) *</label>
+          <input class="form-input" type="number" id="edit-product-price" min="1" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" onclick="closeModal('edit-product-modal')">Cancel</button>
+          <button type="submit" class="btn btn-gold">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <h3 class="modal-title" id="confirm-title">Confirm Action</h3>
+      <button class="modal-close" onclick="closeModal('confirm-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="confirm-message" style="color:var(--text-secondary);margin-bottom:24px"></p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeModal('confirm-modal')">Cancel</button>
+        <button class="btn btn-danger" id="confirm-action-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
