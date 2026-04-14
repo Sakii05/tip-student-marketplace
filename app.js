@@ -945,6 +945,7 @@ function renderAdminDashboard() {
 
   /* Users table */
   const usersBody = $('admin-users-body');
+  const session = getSession();
   if (usersBody) {
     usersBody.innerHTML = users.map(u => {
       const userListings = products.filter(p => p.sellerId === u.id).length;
@@ -958,7 +959,9 @@ function renderAdminDashboard() {
         <td>
           ${isMockUser
             ? `<span style="font-size:0.72rem;color:var(--text-muted)">Demo</span>`
-            : `<button class="btn btn-danger" style="padding:5px 12px;font-size:0.75rem" onclick="adminDeleteUser('${esc(u.id)}')">🗑 Delete</button>`
+            : session && session.isAdmin
+              ? `<button class="btn btn-danger" style="padding:5px 12px;font-size:0.75rem" onclick="adminDeleteUser('${esc(u.id)}')">🗑 Delete</button>`
+              : `<span style="font-size:0.72rem;color:var(--text-muted)">—</span>`
           }
         </td>
       </tr>`;
@@ -1014,6 +1017,8 @@ window.adminEditProduct = adminEditProduct;
 
 /* ── Delete User ────────────────────────────────────────────── */
 function adminDeleteUser(userId) {
+  const session = getSession();
+  if (!session || !session.isAdmin) { showToast('Access denied.', 'error'); return; }
   const users = DB.getUsers();
   const user  = users.find(u => u.id === userId);
   if (!user) return;
