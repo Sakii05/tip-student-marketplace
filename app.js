@@ -352,7 +352,7 @@ function login(emailOrUser, password) {
     loginAsAdmin();
     return;
   }
-  /* Block non-TIP emails from signing in */
+  /* Block non-TIP emails */
   if (!emailOrUser.trim().toLowerCase().endsWith('@tip.edu.ph')) {
     showToast('❌ Only @tip.edu.ph accounts are allowed.', 'error'); return;
   }
@@ -369,8 +369,7 @@ function login(emailOrUser, password) {
 function register(name, email, password, course) {
   const cleanEmail = email.trim().toLowerCase();
   if (!cleanEmail.endsWith('@tip.edu.ph')) {
-    showToast('❌ Only @tip.edu.ph emails are accepted. Use your TIP school email.', 'error');
-    return;
+    showToast('❌ Only @tip.edu.ph emails are accepted. Use your TIP school email.', 'error'); return;
   }
   if (password.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
   const result = DB.createUser(name, cleanEmail, password, course);
@@ -1083,9 +1082,11 @@ function setupEventListeners() {
     const emailVal = $('reg-email').value.trim().toLowerCase();
     if (!emailVal.endsWith('@tip.edu.ph')) {
       showToast('❌ Only @tip.edu.ph emails are accepted.', 'error');
+      $('reg-email').style.borderColor = 'var(--danger)';
       $('reg-email').focus();
       return;
     }
+    $('reg-email').style.borderColor = '';
     register($('reg-name').value.trim(), emailVal, $('reg-password').value, $('reg-course')?.value.trim() || '');
   });
 
@@ -1200,12 +1201,23 @@ function setupEventListeners() {
 
 function init() {
   seedMockData();
+
+  /* ── Purge any non-TIP accounts from localStorage ───────────── */
+  const session = getSession();
+  if (session && !session.isAdmin && !session.email?.toLowerCase().endsWith('@tip.edu.ph')) {
+    DB.saveSession(null);
+    showToast('⚠ Your account used a non-TIP email and has been removed. Please register with @tip.edu.ph.', 'error');
+  }
+  /* Remove all stored non-TIP users */
+  const cleanUsers = DB.getUsers().filter(u => u.email?.toLowerCase().endsWith('@tip.edu.ph'));
+  DB.saveUsers(cleanUsers);
+
   setupEventListeners();
   setupUploadForm();
 
   /* Restore session state */
-  const session = getSession();
-  if (session?.isAdmin) { isAdmin = true; navigateTo('admin'); }
+  const activeSession = getSession();
+  if (activeSession?.isAdmin) { isAdmin = true; navigateTo('admin'); }
   else { navigateTo('home'); }
 
   updateAuthUI();
