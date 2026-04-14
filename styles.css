@@ -269,6 +269,21 @@ a { text-decoration: none; color: inherit; }
 }
 .bottom-nav-item .nav-icon { font-size: 1.3rem; }
 .bottom-nav-item.active { color: var(--gold); }
+
+/* Mobile bottom nav avatar circle */
+.mobile-avatar-icon {
+  display: flex !important;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: #000 !important;
+  font-family: var(--font-display);
+  font-size: 0.78rem !important;
+  font-weight: 800;
+  align-items: center; justify-content: center;
+  line-height: 1;
+}
+
 .bottom-nav-item.sell-btn {
   flex: 0 0 52px; height: 52px;
   border-radius: 50%;
@@ -1069,12 +1084,6 @@ a { text-decoration: none; color: inherit; }
   font-weight: 800;
   color: var(--gold);
   display: block;
-  word-break: break-word;
-  line-height: 1.2;
-}
-.admin-stat-value.is-text {
-  font-size: clamp(0.85rem, 2.5vw, 1.3rem);
-  line-height: 1.3;
 }
 .admin-stat-label { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
 
@@ -1368,6 +1377,8 @@ a { text-decoration: none; color: inherit; }
   .navbar-actions .nav-btn { display: none; }
   .avatar-btn { display: flex !important; }
   .navbar-actions .logout-btn { display: none; }
+  /* Hide avatar from top navbar on mobile — use bottom nav instead */
+  .navbar-actions .avatar-btn { display: none !important; }
 
   .products-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; padding: 0 12px 120px; }
   .card-image-placeholder, .product-card .card-image { height: 130px; }

@@ -359,9 +359,9 @@
         <div class="divider">demo accounts</div>
         <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px;font-size:0.78rem;color:var(--text-secondary);line-height:2">
           🔑 <strong style="color:var(--gold)">admin</strong> / admin123 → Admin Dashboard<br>
-          📧 maria@tip.edu.ph / password123<br>
-          📧 juan@tip.edu.ph / password123<br>
-          📧 ana@tip.edu.ph / password123
+          📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1b767a69727a5b6f726b357e7f6e356b73">[email&#160;protected]</a> / password123<br>
+          📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="442e31252a04302d346a2120316a342c">[email&#160;protected]</a> / password123<br>
+          📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7d1c131c3d09140d53181908530d15">[email&#160;protected]</a> / password123
         </div>
       </form>
       <form class="auth-form" id="register-form">
@@ -372,7 +372,7 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="reg-email">TIP Email *</label>
-            <input class="form-input" type="email" id="reg-email" placeholder="yourname@tip.edu.ph" required>
+            <input class="form-input" type="email" id="reg-email" placeholder="yourname@tip.edu.ph" pattern=".+@tip\.edu\.ph" title="Must be a TIP email (@tip.edu.ph)" required>
           </div>
         </div>
         <div class="form-group">
@@ -461,15 +461,4 @@
       <button class="modal-close" onclick="closeModal('confirm-modal')">✕</button>
     </div>
     <div class="modal-body">
-      <p id="confirm-message" style="color:var(--text-secondary);margin-bottom:24px"></p>
-      <div class="modal-actions">
-        <button class="btn btn-ghost" onclick="closeModal('confirm-modal')">Cancel</button>
-        <button class="btn btn-danger" id="confirm-action-btn">Delete</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script src="app.js"></script>
-</body>
-</html>
+      <p id="confirm-message

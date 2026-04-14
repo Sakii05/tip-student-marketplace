@@ -363,6 +363,9 @@ function login(emailOrUser, password) {
 }
 
 function register(name, email, password, course) {
+  if (!email.toLowerCase().endsWith('@tip.edu.ph')) {
+    showToast('Only TIP email addresses (@tip.edu.ph) are allowed.', 'error'); return;
+  }
   if (password.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
   const result = DB.createUser(name, email, password, course);
   if (result.error) { showToast(result.error, 'error'); return; }
@@ -396,7 +399,7 @@ function updateAuthUI() {
 
   // Mobile avatar icon
   document.querySelectorAll('.mobile-avatar-icon').forEach(el => {
-    el.textContent = session?.avatar || '◉';
+    el.textContent = session?.avatar || session?.name?.charAt(0).toUpperCase() || '◉';
   });
 
   // Update hero stats
@@ -938,11 +941,7 @@ function renderAdminDashboard() {
   const catCounts = {};
   products.forEach(p => { catCounts[p.category] = (catCounts[p.category]||0)+1; });
   const topCat = Object.entries(catCounts).sort((a,b) => b[1]-a[1])[0]?.[0] || '—';
-  if (el('admin-top-category')) {
-    const catEl = el('admin-top-category');
-    catEl.textContent = topCat !== '—' ? categoryEmoji(topCat) + ' ' + topCat : '—';
-    catEl.classList.add('is-text');
-  }
+  if (el('admin-top-category')) el('admin-top-category').textContent = topCat;
 
   /* Listings table */
   renderAdminTable(products);
