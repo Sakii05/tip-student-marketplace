@@ -65,7 +65,6 @@ const DB = {
   saveWishlist(data) { localStorage.setItem(DB_KEYS.wishlist, JSON.stringify(data)); },
   saveSession(data)  { localStorage.setItem(DB_KEYS.session,  JSON.stringify(data)); },
 
-  /* ── Users ──────────────────────────────────────────────────── */
   createUser(name, email, password, course = '') {
     const users = this.getUsers();
     if (users.find(u => u.email === email)) return { error: 'Email already registered.' };
@@ -100,7 +99,6 @@ const DB = {
 
   getUserById(id) { return this.getUsers().find(u => u.id === id) || null; },
 
-  /* ── Products ───────────────────────────────────────────────── */
   createProduct({ title, description, price, category, image, condition, sellerId, sellerName }) {
     const products = this.getProducts();
     const product = {
@@ -134,7 +132,6 @@ const DB = {
 
   getProductById(id) { return this.getProducts().find(p => p.id === id) || null; },
 
-  /* ── Messages ───────────────────────────────────────────────── */
   getConversations(userId) {
     const messages = this.getMessages();
     const convMap = {};
@@ -176,7 +173,6 @@ const DB = {
 function seedMockData() {
   if (localStorage.getItem(DB_KEYS.seeded)) return;
 
-  /* ── Mock Users ─────────────────────────────────────────────── */
   const mockUsers = [
     { id: 'u_maria', name: 'Maria Santos',   email: 'maria@tip.edu.ph', password: btoa('password123'), course: 'BS Computer Science', bio: 'CS junior, selling old textbooks and gadgets!', avatar: 'M', joinedAt: '2024-06-01T08:00:00.000Z' },
     { id: 'u_juan',  name: 'Juan Dela Cruz', email: 'juan@tip.edu.ph',  password: btoa('password123'), course: 'BS Electronics Engineering', bio: 'EE student. Clean seller, fast replies!', avatar: 'J', joinedAt: '2024-06-02T09:00:00.000Z' },
@@ -184,98 +180,27 @@ function seedMockData() {
   ];
   DB.saveUsers(mockUsers);
 
-  /* ── Mock Products ──────────────────────────────────────────── */
   const now = Date.now();
   const mockProducts = [
-    {
-      id: 'p_mock1', title: 'Calculus Early Transcendentals (8th Ed.)',
-      description: 'Lightly used Stewart Calculus textbook. Some highlighting on chapters 1–3 only. Complete with all pages. Perfect for Math majors.',
-      price: 450, category: 'Books', image: '', condition: 'Good',
-      sellerId: 'u_maria', sellerName: 'Maria Santos',
-      createdAt: new Date(now - 86400000 * 1).toISOString(), views: 14,
-    },
-    {
-      id: 'p_mock2', title: 'Casio fx-991EX Classwiz Scientific Calculator',
-      description: 'Barely used Casio calculator. All functions work perfectly. Comes with original case and manual. No scratches.',
-      price: 650, category: 'Electronics', image: '', condition: 'Like New',
-      sellerId: 'u_juan', sellerName: 'Juan Dela Cruz',
-      createdAt: new Date(now - 86400000 * 2).toISOString(), views: 22,
-    },
-    {
-      id: 'p_mock3', title: 'TIP PE Uniform (Medium)',
-      description: 'Official TIP PE uniform set — shirt and shorts. Worn only twice. Size medium. In great condition, no stains.',
-      price: 280, category: 'Clothing', image: '', condition: 'Like New',
-      sellerId: 'u_ana', sellerName: 'Ana Reyes',
-      createdAt: new Date(now - 86400000 * 3).toISOString(), views: 8,
-    },
-    {
-      id: 'p_mock4', title: 'Data Structures & Algorithms Notes (Complete)',
-      description: 'Handwritten and typed notes for the entire DSA course. Includes sample problems with solutions. Ideal for review.',
-      price: 120, category: 'Notes', image: '', condition: 'Like New',
-      sellerId: 'u_maria', sellerName: 'Maria Santos',
-      createdAt: new Date(now - 86400000 * 4).toISOString(), views: 31,
-    },
-    {
-      id: 'p_mock5', title: 'Arduino Uno Starter Kit',
-      description: 'Complete Arduino Uno R3 kit with breadboard, jumper wires, LEDs, resistors, and sensors. Used for one semester project.',
-      price: 900, category: 'Electronics', image: '', condition: 'Good',
-      sellerId: 'u_juan', sellerName: 'Juan Dela Cruz',
-      createdAt: new Date(now - 86400000 * 5).toISOString(), views: 19,
-    },
-    {
-      id: 'p_mock6', title: 'Engineering Drawing Set',
-      description: 'Complete drafting set — T-square, triangles, compass, protractor, drafting pencils. Used for one term only.',
-      price: 350, category: 'Supplies', image: '', condition: 'Good',
-      sellerId: 'u_ana', sellerName: 'Ana Reyes',
-      createdAt: new Date(now - 86400000 * 6).toISOString(), views: 7,
-    },
-    {
-      id: 'p_mock7', title: 'Introduction to Programming (C++) Textbook',
-      description: 'Good condition C++ programming book. Covers all basics to OOP. A few pencil marks but nothing distracting.',
-      price: 300, category: 'Books', image: '', condition: 'Good',
-      sellerId: 'u_juan', sellerName: 'Juan Dela Cruz',
-      createdAt: new Date(now - 86400000 * 7).toISOString(), views: 11,
-    },
-    {
-      id: 'p_mock8', title: 'Laptop Stand + USB Hub Combo',
-      description: 'Adjustable aluminum laptop stand paired with a 4-port USB 3.0 hub. Improves ergonomics during long study sessions.',
-      price: 550, category: 'Electronics', image: '', condition: 'Like New',
-      sellerId: 'u_maria', sellerName: 'Maria Santos',
-      createdAt: new Date(now - 86400000 * 8).toISOString(), views: 25,
-    },
+    { id: 'p_mock1', title: 'Calculus Early Transcendentals (8th Ed.)', description: 'Lightly used Stewart Calculus textbook. Some highlighting on chapters 1–3 only. Complete with all pages. Perfect for Math majors.', price: 450, category: 'Books', image: '', condition: 'Good', sellerId: 'u_maria', sellerName: 'Maria Santos', createdAt: new Date(now - 86400000 * 1).toISOString(), views: 14 },
+    { id: 'p_mock2', title: 'Casio fx-991EX Classwiz Scientific Calculator', description: 'Barely used Casio calculator. All functions work perfectly. Comes with original case and manual. No scratches.', price: 650, category: 'Electronics', image: '', condition: 'Like New', sellerId: 'u_juan', sellerName: 'Juan Dela Cruz', createdAt: new Date(now - 86400000 * 2).toISOString(), views: 22 },
+    { id: 'p_mock3', title: 'TIP PE Uniform (Medium)', description: 'Official TIP PE uniform set — shirt and shorts. Worn only twice. Size medium. In great condition, no stains.', price: 280, category: 'Clothing', image: '', condition: 'Like New', sellerId: 'u_ana', sellerName: 'Ana Reyes', createdAt: new Date(now - 86400000 * 3).toISOString(), views: 8 },
+    { id: 'p_mock4', title: 'Data Structures & Algorithms Notes (Complete)', description: 'Handwritten and typed notes for the entire DSA course. Includes sample problems with solutions. Ideal for review.', price: 120, category: 'Notes', image: '', condition: 'Like New', sellerId: 'u_maria', sellerName: 'Maria Santos', createdAt: new Date(now - 86400000 * 4).toISOString(), views: 31 },
+    { id: 'p_mock5', title: 'Arduino Uno Starter Kit', description: 'Complete Arduino Uno R3 kit with breadboard, jumper wires, LEDs, resistors, and sensors. Used for one semester project.', price: 900, category: 'Electronics', image: '', condition: 'Good', sellerId: 'u_juan', sellerName: 'Juan Dela Cruz', createdAt: new Date(now - 86400000 * 5).toISOString(), views: 19 },
+    { id: 'p_mock6', title: 'Engineering Drawing Set', description: 'Complete drafting set — T-square, triangles, compass, protractor, drafting pencils. Used for one term only.', price: 350, category: 'Supplies', image: '', condition: 'Good', sellerId: 'u_ana', sellerName: 'Ana Reyes', createdAt: new Date(now - 86400000 * 6).toISOString(), views: 7 },
+    { id: 'p_mock7', title: 'Introduction to Programming (C++) Textbook', description: 'Good condition C++ programming book. Covers all basics to OOP. A few pencil marks but nothing distracting.', price: 300, category: 'Books', image: '', condition: 'Good', sellerId: 'u_juan', sellerName: 'Juan Dela Cruz', createdAt: new Date(now - 86400000 * 7).toISOString(), views: 11 },
+    { id: 'p_mock8', title: 'Laptop Stand + USB Hub Combo', description: 'Adjustable aluminum laptop stand paired with a 4-port USB 3.0 hub. Improves ergonomics during long study sessions.', price: 550, category: 'Electronics', image: '', condition: 'Like New', sellerId: 'u_maria', sellerName: 'Maria Santos', createdAt: new Date(now - 86400000 * 8).toISOString(), views: 25 },
   ];
   DB.saveProducts(mockProducts);
 
-  /* ── Mock Messages ──────────────────────────────────────────── */
   const mockMessages = [
-    {
-      id: 'm_mock1', senderId: 'u_maria', senderName: 'Maria Santos', receiverId: 'u_juan', receiverName: 'Juan Dela Cruz',
-      text: 'Hi Juan, is your calculator still available?', createdAt: new Date(now - 86400000 * 2).toISOString(), read: true,
-    },
-    {
-      id: 'm_mock2', senderId: 'u_juan', senderName: 'Juan Dela Cruz', receiverId: 'u_maria', receiverName: 'Maria Santos',
-      text: 'Yes, it is! Want to meet at the library?', createdAt: new Date(now - 86400000 * 2 + 60000).toISOString(), read: true,
-    },
-    {
-      id: 'm_mock3', senderId: 'u_maria', senderName: 'Maria Santos', receiverId: 'u_juan', receiverName: 'Juan Dela Cruz',
-      text: 'Sure, tomorrow at 2 PM?', createdAt: new Date(now - 86400000 * 2 + 120000).toISOString(), read: true,
-    },
-    {
-      id: 'm_mock4', senderId: 'u_juan', senderName: 'Juan Dela Cruz', receiverId: 'u_ana', receiverName: 'Ana Reyes',
-      text: 'Hey Ana, your PE uniform looks great!', createdAt: new Date(now - 86400000 * 1).toISOString(), read: true,
-    },
-    {
-      id: 'm_mock5', senderId: 'u_ana', senderName: 'Ana Reyes', receiverId: 'u_juan', receiverName: 'Juan Dela Cruz',
-      text: 'Thanks! It\'s still available. Meet at the oval?', createdAt: new Date(now - 86400000 * 1 + 60000).toISOString(), read: true,
-    },
-    {
-      id: 'm_mock6', senderId: 'u_ana', senderName: 'Ana Reyes', receiverId: 'u_maria', receiverName: 'Maria Santos',
-      text: 'Maria, are your DSA notes still for sale?', createdAt: new Date(now - 86400000 * 3).toISOString(), read: true,
-    },
-    {
-      id: 'm_mock7', senderId: 'u_maria', senderName: 'Maria Santos', receiverId: 'u_ana', receiverName: 'Ana Reyes',
-      text: 'Yes! They\'re in perfect condition.', createdAt: new Date(now - 86400000 * 3 + 60000).toISOString(), read: true,
-    },
+    { id: 'm_mock1', senderId: 'u_maria', senderName: 'Maria Santos', receiverId: 'u_juan', receiverName: 'Juan Dela Cruz', text: 'Hi Juan, is your calculator still available?', createdAt: new Date(now - 86400000 * 2).toISOString(), read: true },
+    { id: 'm_mock2', senderId: 'u_juan', senderName: 'Juan Dela Cruz', receiverId: 'u_maria', receiverName: 'Maria Santos', text: 'Yes, it is! Want to meet at the library?', createdAt: new Date(now - 86400000 * 2 + 60000).toISOString(), read: true },
+    { id: 'm_mock3', senderId: 'u_maria', senderName: 'Maria Santos', receiverId: 'u_juan', receiverName: 'Juan Dela Cruz', text: 'Sure, tomorrow at 2 PM?', createdAt: new Date(now - 86400000 * 2 + 120000).toISOString(), read: true },
+    { id: 'm_mock4', senderId: 'u_juan', senderName: 'Juan Dela Cruz', receiverId: 'u_ana', receiverName: 'Ana Reyes', text: 'Hey Ana, your PE uniform looks great!', createdAt: new Date(now - 86400000 * 1).toISOString(), read: true },
+    { id: 'm_mock5', senderId: 'u_ana', senderName: 'Ana Reyes', receiverId: 'u_juan', receiverName: 'Juan Dela Cruz', text: 'Thanks! It\'s still available. Meet at the oval?', createdAt: new Date(now - 86400000 * 1 + 60000).toISOString(), read: true },
+    { id: 'm_mock6', senderId: 'u_ana', senderName: 'Ana Reyes', receiverId: 'u_maria', receiverName: 'Maria Santos', text: 'Maria, are your DSA notes still for sale?', createdAt: new Date(now - 86400000 * 3).toISOString(), read: true },
+    { id: 'm_mock7', senderId: 'u_maria', senderName: 'Maria Santos', receiverId: 'u_ana', receiverName: 'Ana Reyes', text: 'Yes! They\'re in perfect condition.', createdAt: new Date(now - 86400000 * 3 + 60000).toISOString(), read: true },
   ];
   DB.saveMessages(mockMessages);
 
@@ -347,7 +272,6 @@ function loginAsAdmin() {
 }
 
 function login(emailOrUser, password) {
-  /* Admin shortcut */
   if (emailOrUser.trim().toLowerCase() === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
     loginAsAdmin();
     return;
@@ -394,12 +318,10 @@ function updateAuthUI() {
     avatar.textContent = session.avatar || session.name?.charAt(0).toUpperCase() || '?';
   }
 
-  // Mobile avatar icon
   document.querySelectorAll('.mobile-avatar-icon').forEach(el => {
     el.textContent = session?.avatar || '◉';
   });
 
-  // Update hero stats
   const products = DB.getProducts();
   const users    = DB.getUsers();
   const sL = $('stat-listings'); if (sL) sL.textContent = products.length;
@@ -413,7 +335,6 @@ function updateAuthUI() {
 function navigateTo(page) {
   const session = getSession();
 
-  /* Guard protected pages */
   if (['upload','profile'].includes(page) && !session) {
     openModal('auth-modal');
     showToast('Please sign in to continue.', 'info');
@@ -423,7 +344,6 @@ function navigateTo(page) {
     showToast('Access denied.', 'error');
     return;
   }
-  /* Redirect admin to their page */
   if (page === 'home' && session?.isAdmin) page = 'admin';
 
   document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
@@ -436,7 +356,6 @@ function navigateTo(page) {
   currentPage = page;
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  /* Page-specific init */
   if (page === 'home')    renderProducts();
   if (page === 'chat')    renderChat();
   if (page === 'profile') renderProfilePage();
@@ -449,7 +368,6 @@ function navigateTo(page) {
 
 function getFilteredProducts() {
   let products = DB.getProducts();
-
   if (activeCategory !== 'All') products = products.filter(p => p.category === activeCategory);
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
@@ -460,11 +378,10 @@ function getFilteredProducts() {
       p.sellerName.toLowerCase().includes(q)
     );
   }
-
   const sorts = {
-    newest:     (a,b) => b.createdAt.localeCompare(a.createdAt),
-    oldest:     (a,b) => a.createdAt.localeCompare(b.createdAt),
-    'price-asc':(a,b) => a.price - b.price,
+    newest:      (a,b) => b.createdAt.localeCompare(a.createdAt),
+    oldest:      (a,b) => a.createdAt.localeCompare(b.createdAt),
+    'price-asc': (a,b) => a.price - b.price,
     'price-desc':(a,b) => b.price - a.price,
   };
   return products.sort(sorts[activeSort] || sorts.newest);
@@ -511,12 +428,10 @@ function renderProducts() {
   const grid = $('products-grid');
   if (!grid) return;
   const products = getFilteredProducts();
-
   if (!products.length) {
     grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><h3>No listings found</h3><p style="color:var(--text-muted);margin-top:8px;font-size:0.85rem">Try a different filter or search term</p></div>`;
     return;
   }
-
   grid.innerHTML = products.map((p, i) => productCardHTML(p, i * 40)).join('');
   updateAuthUI();
 }
@@ -528,12 +443,9 @@ function renderProducts() {
 function openProductModal(id) {
   const p = DB.getProductById(id);
   if (!p) return;
-
   DB.updateProduct(id, { views: (p.views || 0) + 1 });
-
   const session = getSession();
   const isOwner = session && session.id === p.sellerId;
-
   const imageHTML = p.image
     ? `<img src="${esc(p.image)}" alt="${esc(p.title)}" style="width:100%;height:100%;object-fit:cover">`
     : `<span>${categoryEmoji(p.category)}</span>`;
@@ -564,10 +476,8 @@ function openProductModal(id) {
         </div>
       </div>
     </div>`;
-
   openModal('product-modal');
 }
-
 window.openProductModal = openProductModal;
 
 /* ════════════════════════════════════════════════════════════════
@@ -575,7 +485,6 @@ window.openProductModal = openProductModal;
    ════════════════════════════════════════════════════════════════ */
 
 function setupUploadForm() {
-  /* Image preview */
   const zone = $('img-upload-zone');
   const fileInput = $('product-image');
   const preview = $('img-preview');
@@ -605,15 +514,13 @@ function setupUploadForm() {
     }));
   }
 
-  /* Submit */
   const form = $('upload-form');
   if (form) {
     form.addEventListener('submit', e => {
       e.preventDefault();
       const session = getSession();
       if (!session || session.isAdmin) { showToast('Only students can list items.', 'error'); return; }
-
-      const product = DB.createProduct({
+      DB.createProduct({
         title:       $('product-title').value.trim(),
         description: $('product-desc').value.trim(),
         price:       $('product-price').value,
@@ -623,7 +530,6 @@ function setupUploadForm() {
         sellerId:    session.id,
         sellerName:  session.name,
       });
-
       form.reset();
       if (preview) { preview.classList.remove('visible'); preview.src = ''; }
       if (zone) {
@@ -631,7 +537,6 @@ function setupUploadForm() {
         zone.querySelector('.upload-text').textContent = 'Click to upload or drag & drop';
       }
       if ($('desc-count')) $('desc-count').textContent = '0 / 500';
-
       showToast('Listing posted! 🚀', 'success');
       navigateTo('home');
       updateAuthUI();
@@ -697,7 +602,6 @@ function startChatWithSeller(sellerId, sellerName, productId) {
   const session = getSession();
   if (!session || session.isAdmin) { openModal('auth-modal'); showToast('Sign in to message sellers.', 'info'); return; }
   if (session.id === sellerId) { showToast('That\'s your own listing!', 'info'); return; }
-
   activeChatId = sellerId;
   navigateTo('chat');
   setTimeout(() => openThread(sellerId, sellerName), 100);
@@ -716,16 +620,13 @@ function renderChat() {
       </div>`;
     return;
   }
-
   const convos = DB.getConversations(session.id);
   const list = $('chat-list');
   if (!list) return;
-
   if (!convos.length) {
     list.innerHTML = `<div style="text-align:center;padding:40px 16px;color:var(--text-muted);font-size:0.85rem">No conversations yet.<br>Browse listings and message a seller!</div>`;
     return;
   }
-
   list.innerHTML = convos.map(c => {
     const lastMsg = c.messages[c.messages.length - 1];
     return `
@@ -742,10 +643,7 @@ function renderChat() {
 function openThread(userId, userName) {
   const session = getSession();
   if (!session) return;
-
   activeChatId = userId;
-
-  /* Update header */
   const header = $('chat-header-content');
   if (header) {
     header.innerHTML = `
@@ -755,11 +653,8 @@ function openThread(userId, userName) {
         <div style="font-size:0.72rem;color:var(--success)">● Online</div>
       </div>`;
   }
-
-  /* Render messages */
   const messagesEl = $('chat-messages');
   const thread = DB.getThread(session.id, userId);
-
   if (thread.length === 0) {
     messagesEl.innerHTML = `<div class="chat-empty" id="chat-empty">
       <div class="chat-empty-icon">💬</div>
@@ -775,13 +670,9 @@ function openThread(userId, userName) {
     }).join('');
   }
   messagesEl.scrollTop = messagesEl.scrollHeight;
-
-  /* Show input */
   const inputArea = $('chat-input-area');
   if (inputArea) inputArea.style.display = 'flex';
   $('chat-input')?.focus();
-
-  /* Update sidebar active */
   renderChatSidebar(userId);
 }
 
@@ -789,8 +680,7 @@ function renderChatSidebar(activeId) {
   const session = getSession();
   const convos = DB.getConversations(session.id);
   const list = $('chat-list');
-  if (!list) return;
-  if (!convos.length) return;
+  if (!list || !convos.length) return;
   list.innerHTML = convos.map(c => `
     <div class="chat-list-item ${activeId === c.userId ? 'active' : ''}" onclick="openThread('${esc(c.userId)}','${esc(c.name)}')">
       <div class="chat-avatar">${esc(c.name.charAt(0))}</div>
@@ -807,30 +697,17 @@ function sendMessage() {
   const input = $('chat-input');
   const text  = input?.value?.trim();
   if (!text) return;
-
-  /* Find receiver name */
   const convos = DB.getConversations(session.id);
   const convo  = convos.find(c => c.userId === activeChatId);
   const receiverName = convo?.name || 'Seller';
-
-  DB.sendMessage({
-    senderId:     session.id,
-    senderName:   session.name,
-    receiverId:   activeChatId,
-    receiverName,
-    text,
-  });
-
+  DB.sendMessage({ senderId: session.id, senderName: session.name, receiverId: activeChatId, receiverName, text });
   input.value = '';
   openThread(activeChatId, receiverName);
   triggerBotResponse(activeChatId, receiverName, session);
 }
 
 function triggerBotResponse(sellerId, sellerName, session) {
-  /* Clear any previous pending bot reply */
   if (botTypingTimer) { clearTimeout(botTypingTimer); botTypingTimer = null; }
-
-  /* Show typing indicator */
   const messagesEl = $('chat-messages');
   const typingEl = document.createElement('div');
   typingEl.className = 'typing-indicator';
@@ -838,25 +715,12 @@ function triggerBotResponse(sellerId, sellerName, session) {
   typingEl.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
   messagesEl.appendChild(typingEl);
   messagesEl.scrollTop = messagesEl.scrollHeight;
-
-  const delay = 2500 + Math.random() * 1500; // 2.5–4s
-
+  const delay = 2500 + Math.random() * 1500;
   botTypingTimer = setTimeout(() => {
-    /* Remove typing indicator */
     document.getElementById('typing-indicator')?.remove();
-
-    /* Pick a response */
     const responses = BOT_RESPONSES[sellerName] || BOT_RESPONSES.default;
     const reply = responses[Math.floor(Math.random() * responses.length)];
-
-    DB.sendMessage({
-      senderId:     sellerId,
-      senderName:   sellerName,
-      receiverId:   session.id,
-      receiverName: session.name,
-      text:         reply,
-    });
-
+    DB.sendMessage({ senderId: sellerId, senderName: sellerName, receiverId: session.id, receiverName: session.name, text: reply });
     openThread(sellerId, sellerName);
     botTypingTimer = null;
   }, delay);
@@ -869,7 +733,6 @@ function triggerBotResponse(sellerId, sellerName, session) {
 function renderProfilePage() {
   const session = getSession();
   if (!session || session.isAdmin) return;
-
   const header = $('profile-header-info');
   if (header) {
     header.innerHTML = `
@@ -884,8 +747,6 @@ function renderProfilePage() {
         </div>
       </div>`;
   }
-
-  /* My listings */
   const myProducts = DB.getProducts().filter(p => p.sellerId === session.id);
   const listingsEl = $('my-listings-content');
   if (listingsEl) {
@@ -895,8 +756,6 @@ function renderProfilePage() {
       listingsEl.innerHTML = `<div class="products-grid" style="padding:0">${myProducts.map(p => productCardHTML(p)).join('')}</div>`;
     }
   }
-
-  /* Saved items */
   const wishlist   = DB.getWishlist();
   const savedItems = DB.getProducts().filter(p => wishlist.includes(p.id));
   const savedEl    = $('saved-content');
@@ -907,8 +766,6 @@ function renderProfilePage() {
       savedEl.innerHTML = `<div class="products-grid" style="padding:0">${savedItems.map(p => productCardHTML(p)).join('')}</div>`;
     }
   }
-
-  /* Pre-fill edit form */
   const nameInput   = $('edit-name');
   const emailInput  = $('edit-email');
   const courseInput = $('edit-course');
@@ -928,27 +785,28 @@ function renderAdminDashboard() {
   const users    = DB.getUsers();
   const messages = DB.getMessages();
 
-  /* Stats */
   const el = id => $(id);
   if (el('admin-total-listings')) el('admin-total-listings').textContent = products.length;
   if (el('admin-total-users'))    el('admin-total-users').textContent    = users.length;
   if (el('admin-total-messages')) el('admin-total-messages').textContent = messages.length;
 
-  /* Top category */
   const catCounts = {};
   products.forEach(p => { catCounts[p.category] = (catCounts[p.category]||0)+1; });
   const topCat = Object.entries(catCounts).sort((a,b) => b[1]-a[1])[0]?.[0] || '—';
   if (el('admin-top-category')) el('admin-top-category').textContent = topCat;
 
-  /* Listings table */
   renderAdminTable(products);
 
-  /* Users table */
+  /* ── Users Table ── */
   const usersBody = $('admin-users-body');
   if (usersBody) {
+    if (!users.length) {
+      usersBody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px">No users yet</td></tr>`;
+      return;
+    }
     usersBody.innerHTML = users.map(u => {
       const userListings = products.filter(p => p.sellerId === u.id).length;
-      const isMockUser = ['u_maria','u_juan','u_ana'].includes(u.id);
+      const isMockUser = ['u_maria', 'u_juan', 'u_ana'].includes(u.id);
       return `<tr>
         <td><strong>${esc(u.name)}</strong></td>
         <td style="color:var(--text-secondary)">${esc(u.email)}</td>
@@ -962,30 +820,23 @@ function renderAdminDashboard() {
           }
         </td>
       </tr>`;
-    }).join('') || `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px">No users yet</td></tr>`;
+    }).join('');
   }
 }
 
 function renderAdminTable(products) {
   const tbody = $('admin-table-body');
   if (!tbody) return;
-
   const query = ($('admin-search')?.value || '').toLowerCase();
   const filtered = query
     ? products.filter(p => p.title.toLowerCase().includes(query) || p.sellerName.toLowerCase().includes(query) || p.category.toLowerCase().includes(query))
     : products;
-
   tbody.innerHTML = filtered.map(p => {
     const imgHTML = p.image
       ? `<img class="admin-item-img" src="${esc(p.image)}" alt="">`
       : `<div class="admin-item-img" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:var(--bg-input)">${categoryEmoji(p.category)}</div>`;
     return `<tr>
-      <td>
-        <div class="admin-item-cell">
-          ${imgHTML}
-          <span style="font-weight:600;font-size:0.85rem">${esc(p.title)}</span>
-        </div>
-      </td>
+      <td><div class="admin-item-cell">${imgHTML}<span style="font-weight:600;font-size:0.85rem">${esc(p.title)}</span></div></td>
       <td><span class="badge badge-category">${esc(p.category)}</span></td>
       <td style="color:var(--gold);font-weight:700;font-family:var(--font-display)">${fmt(p.price)}</td>
       <td style="color:var(--text-secondary)">${esc(p.sellerName)}</td>
@@ -1016,31 +867,18 @@ window.adminEditProduct = adminEditProduct;
 function adminDeleteUser(userId) {
   const session = getSession();
   if (!session || !session.isAdmin) { showToast('Access denied.', 'error'); return; }
+
   const users = DB.getUsers();
   const user  = users.find(u => u.id === userId);
-  if (!user) return;
+  if (!user) { showToast('User not found.', 'error'); return; }
 
   showConfirm(
     '🗑 Delete User',
     `Delete "${user.name}" (${user.email})? This will also remove all their listings and messages. This cannot be undone.`,
     () => {
-      /* Remove user */
-      DB.saveUsers(users.filter(u => u.id !== userId));
-
-      /* Remove their listings */
+      DB.saveUsers(DB.getUsers().filter(u => u.id !== userId));
       DB.saveProducts(DB.getProducts().filter(p => p.sellerId !== userId));
-
-      /* Remove their messages */
       DB.saveMessages(DB.getMessages().filter(m => m.senderId !== userId && m.receiverId !== userId));
-
-      /* Log them out if they're currently signed in */
-      const session = DB.getSession();
-      if (session && session.id === userId) {
-        DB.saveSession(null);
-        isAdmin = false;
-        updateAuthUI();
-      }
-
       renderAdminDashboard();
       showToast(`User "${user.name}" deleted successfully.`, 'success');
     }
@@ -1079,7 +917,6 @@ function showConfirm(title, message, onConfirm) {
 
 function setupEventListeners() {
 
-  /* ── Navigation ─────────────────────────────────────────────── */
   document.addEventListener('click', e => {
     const target = e.target.closest('[data-page]');
     if (target && !target.closest('.modal-overlay')) {
@@ -1088,13 +925,11 @@ function setupEventListeners() {
     }
   });
 
-  /* ── Auth triggers ──────────────────────────────────────────── */
   document.addEventListener('click', e => {
     if (e.target.closest('.open-auth')) openModal('auth-modal');
     if (e.target.closest('.logout-btn')) logout();
   });
 
-  /* ── Auth tabs ──────────────────────────────────────────────── */
   document.querySelectorAll('.auth-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
@@ -1105,19 +940,16 @@ function setupEventListeners() {
     });
   });
 
-  /* ── Login form ─────────────────────────────────────────────── */
   $('login-form')?.addEventListener('submit', e => {
     e.preventDefault();
     login($('login-email').value.trim(), $('login-password').value);
   });
 
-  /* ── Register form ──────────────────────────────────────────── */
   $('register-form')?.addEventListener('submit', e => {
     e.preventDefault();
     register($('reg-name').value.trim(), $('reg-email').value.trim(), $('reg-password').value, $('reg-course')?.value.trim() || '');
   });
 
-  /* ── Filter chips ───────────────────────────────────────────── */
   document.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
@@ -1127,13 +959,11 @@ function setupEventListeners() {
     });
   });
 
-  /* ── Sort select ────────────────────────────────────────────── */
   $('sort-select')?.addEventListener('change', e => {
     activeSort = e.target.value;
     renderProducts();
   });
 
-  /* ── Search ─────────────────────────────────────────────────── */
   let searchTimer;
   $('nav-search')?.addEventListener('input', e => {
     clearTimeout(searchTimer);
@@ -1144,11 +974,9 @@ function setupEventListeners() {
     }, 280);
   });
 
-  /* ── Chat input ─────────────────────────────────────────────── */
   $('chat-send-btn')?.addEventListener('click', sendMessage);
   $('chat-input')?.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
 
-  /* ── Chat search ─────────────────────────────────────────────── */
   $('chat-search')?.addEventListener('input', e => {
     const q = e.target.value.toLowerCase();
     document.querySelectorAll('.chat-list-item').forEach(item => {
@@ -1157,7 +985,6 @@ function setupEventListeners() {
     });
   });
 
-  /* ── Edit product form ──────────────────────────────────────── */
   $('edit-product-form')?.addEventListener('submit', e => {
     e.preventDefault();
     const id = $('edit-product-id').value;
@@ -1174,12 +1001,11 @@ function setupEventListeners() {
     showToast('Listing updated! ✓', 'success');
   });
 
-  /* ── Edit profile form ──────────────────────────────────────── */
   $('edit-profile-form')?.addEventListener('submit', e => {
     e.preventDefault();
     const session = getSession();
     if (!session) return;
-    const updated = DB.updateUser(session.id, {
+    DB.updateUser(session.id, {
       name:   $('edit-name').value.trim(),
       course: $('edit-course')?.value.trim() || '',
       bio:    $('edit-bio')?.value.trim() || '',
@@ -1190,7 +1016,6 @@ function setupEventListeners() {
     showToast('Profile updated! ✓', 'success');
   });
 
-  /* ── Profile tabs ───────────────────────────────────────────── */
   document.querySelectorAll('.profile-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
@@ -1201,22 +1026,18 @@ function setupEventListeners() {
     });
   });
 
-  /* ── Admin search ───────────────────────────────────────────── */
   $('admin-search')?.addEventListener('input', () => renderAdminTable(DB.getProducts()));
 
-  /* ── Modal backdrop close ───────────────────────────────────── */
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); });
   });
 
-  /* ── Escape key ─────────────────────────────────────────────── */
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
       document.querySelectorAll('.modal-overlay.active').forEach(m => closeModal(m.id));
     }
   });
 
-  /* ── Navbar scroll effect ───────────────────────────────────── */
   window.addEventListener('scroll', () => {
     $('main-navbar')?.classList.toggle('scrolled', window.scrollY > 20);
   });
@@ -1231,14 +1052,12 @@ function init() {
   setupEventListeners();
   setupUploadForm();
 
-  /* Restore session state */
   const session = getSession();
   if (session?.isAdmin) { isAdmin = true; navigateTo('admin'); }
   else { navigateTo('home'); }
 
   updateAuthUI();
 
-  /* Message badge (stub) */
   const badge = $('msg-badge');
   if (badge) badge.classList.add('hidden');
 }

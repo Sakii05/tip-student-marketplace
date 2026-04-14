@@ -12,27 +12,22 @@
 </head>
 <body>
 
-<!-- ══ TOAST CONTAINER ══════════════════════════════════════════ -->
 <div id="toast-container"></div>
 
-<!-- ══ NAVBAR ═══════════════════════════════════════════════════ -->
 <nav class="navbar" id="main-navbar">
   <a class="navbar-brand" href="#" data-page="home">
     <div class="brand-icon">◈</div>
     <span class="brand-text">TIP<span>Market</span></span>
   </a>
-
   <div class="nav-links">
     <a href="#" class="nav-link active" data-page="home">Browse</a>
     <a href="#" class="nav-link" data-page="chat">Messages <span class="msg-badge hidden" id="msg-badge">0</span></a>
     <a href="#" class="nav-link" data-page="about">About</a>
   </div>
-
   <div class="navbar-search">
     <span class="search-icon">⌕</span>
     <input type="search" id="nav-search" placeholder="Search listings…" autocomplete="off">
   </div>
-
   <div class="navbar-actions">
     <button class="nav-btn nav-btn-ghost open-auth guest-only">Sign In</button>
     <button class="nav-btn nav-btn-gold open-auth guest-only">Join Free</button>
@@ -42,7 +37,6 @@
   </div>
 </nav>
 
-<!-- ══ BOTTOM NAV (mobile) ══════════════════════════════════════ -->
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
     <button class="bottom-nav-item active" data-page="home"><span class="nav-icon">⊞</span><span>Browse</span></button>
@@ -54,12 +48,10 @@
   </div>
 </nav>
 
-<!-- ══ PAGE WRAPPER ═════════════════════════════════════════════ -->
 <div class="page-wrapper">
 
-  <!-- ══ HOME ══════════════════════════════════════════════════ -->
+  <!-- HOME -->
   <section id="page-home" class="page-section active">
-
     <div class="hero">
       <div class="hero-eyebrow">✦ TIP Official Student Marketplace</div>
       <h1>Trade Smart with<br><span class="highlight">Fellow TIPians</span></h1>
@@ -70,7 +62,6 @@
         <div class="stat"><span class="stat-value" id="stat-sold">18</span><span class="stat-label">Items Sold</span></div>
       </div>
     </div>
-
     <div class="filter-bar">
       <button class="filter-chip active" data-category="All">All</button>
       <button class="filter-chip" data-category="Books">📚 Books</button>
@@ -86,14 +77,12 @@
         <option value="oldest">Oldest First</option>
       </select>
     </div>
-
     <div class="products-grid" id="products-grid">
       <div class="empty-state"><div class="empty-icon">⏳</div><h3>Loading listings…</h3></div>
     </div>
-
   </section>
 
-  <!-- ══ PROFILE ════════════════════════════════════════════════ -->
+  <!-- PROFILE -->
   <section id="page-profile" class="page-section">
     <div class="profile-page">
       <div class="profile-header" id="profile-header-info"></div>
@@ -140,7 +129,7 @@
     </div>
   </section>
 
-  <!-- ══ CHAT ══════════════════════════════════════════════════ -->
+  <!-- CHAT -->
   <section id="page-chat" class="page-section">
     <div class="chat-layout">
       <div class="chat-sidebar" id="chat-sidebar">
@@ -172,7 +161,7 @@
     </div>
   </section>
 
-  <!-- ══ UPLOAD ════════════════════════════════════════════════ -->
+  <!-- UPLOAD -->
   <section id="page-upload" class="page-section">
     <div class="upload-page">
       <h2 class="page-title">List an Item</h2>
@@ -233,7 +222,7 @@
     </div>
   </section>
 
-  <!-- ══ ADMIN DASHBOARD ═══════════════════════════════════════ -->
+  <!-- ADMIN DASHBOARD -->
   <section id="page-admin" class="page-section">
     <div class="admin-page">
       <div class="admin-header">
@@ -244,7 +233,6 @@
         <button class="nav-btn nav-btn-ghost logout-btn">Sign Out</button>
       </div>
 
-      <!-- Stats Cards -->
       <div class="admin-stats-grid" id="admin-stats-grid">
         <div class="admin-stat-card">
           <div class="admin-stat-icon">📦</div>
@@ -278,12 +266,7 @@
           <table class="admin-table" id="admin-table">
             <thead>
               <tr>
-                <th>Item</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>Seller</th>
-                <th>Posted</th>
-                <th>Action</th>
+                <th>Item</th><th>Category</th><th>Price</th><th>Seller</th><th>Posted</th><th>Action</th>
               </tr>
             </thead>
             <tbody id="admin-table-body"></tbody>
@@ -299,16 +282,19 @@
         <div class="table-wrap">
           <table class="admin-table">
             <thead>
-              <tr><th>Name</th><th>Email</th><th>Course</th><th>Joined</th><th>Listings</th><th>Action</th></tr>
+              <tr>
+                <th>Name</th><th>Email</th><th>Course</th><th>Joined</th><th>Listings</th><th>Action</th>
+              </tr>
             </thead>
             <tbody id="admin-users-body"></tbody>
           </table>
         </div>
       </div>
+
     </div>
   </section>
 
-  <!-- ══ ABOUT ═════════════════════════════════════════════════ -->
+  <!-- ABOUT -->
   <section id="page-about" class="page-section">
     <div class="about-page">
       <div class="about-hero">
@@ -332,7 +318,7 @@
 
 </div><!-- /page-wrapper -->
 
-<!-- ══ MODALS ════════════════════════════════════════════════════ -->
+<!-- MODALS -->
 
 <!-- Auth Modal -->
 <div class="modal-overlay" id="auth-modal">
@@ -359,9 +345,9 @@
         <div class="divider">demo accounts</div>
         <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px;font-size:0.78rem;color:var(--text-secondary);line-height:2">
           🔑 <strong style="color:var(--gold)">admin</strong> / admin123 → Admin Dashboard<br>
-          📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="254844574c4465514c550b4041500b554d">[email&#160;protected]</a> / password123<br>
-          📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fa908f9b94ba8e938ad49f9e8fd48a92">[email&#160;protected]</a> / password123<br>
-          📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1e7f707f5e6a776e307b7a6b306e76">[email&#160;protected]</a> / password123
+          📧 maria@tip.edu.ph / password123<br>
+          📧 juan@tip.edu.ph / password123<br>
+          📧 ana@tip.edu.ph / password123
         </div>
       </form>
       <form class="auth-form" id="register-form">
@@ -461,4 +447,15 @@
       <button class="modal-close" onclick="closeModal('confirm-modal')">✕</button>
     </div>
     <div class="modal-body">
-      <p id="confirm-message
+      <p id="confirm-message" style="color:var(--text-secondary);font-size:0.9rem;line-height:1.6"></p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeModal('confirm-modal')">Cancel</button>
+        <button class="btn btn-danger" id="confirm-action-btn">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
