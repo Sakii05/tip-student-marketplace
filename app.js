@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
    TIP Student Marketplace — app.js
-   LocalStorage "database" + Admin Dashboard + Chat Bot Logic
+   Fully migrated to Supabase
    ═══════════════════════════════════════════════════════════════ */
 
 import { supabase } from './supabaseClient.js';
@@ -8,17 +8,8 @@ import { supabase } from './supabaseClient.js';
 'use strict';
 
 /* ════════════════════════════════════════════════════════════════
-   1. CONSTANTS & DB KEYS
+   1. CONSTANTS
    ════════════════════════════════════════════════════════════════ */
-
-const DB_KEYS = {
-  users: 'tip_users',
-  products: 'tip_products',
-  messages: 'tip_messages',
-  session: 'tip_session',
-  wishlist: 'tip_wishlist',
-  seeded: 'tip_seeded_v3',
-};
 
 const ADMIN_CREDENTIALS = { username: 'admin', password: 'admin123' };
 
@@ -51,166 +42,16 @@ const BOT_RESPONSES = {
 };
 
 /* ════════════════════════════════════════════════════════════════
-   2. DB — localStorage CRUD Layer
+   2. SESSION (localStorage for session only — Supabase for all data)
    ════════════════════════════════════════════════════════════════ */
 
-const DB = {
-  getUsers() { return JSON.parse(localStorage.getItem(DB_KEYS.users) || '[]'); },
-  getProducts() { return JSON.parse(localStorage.getItem(DB_KEYS.products) || '[]'); },
-  getMessages() { return JSON.parse(localStorage.getItem(DB_KEYS.messages) || '[]'); },
-  getWishlist() { return JSON.parse(localStorage.getItem(DB_KEYS.wishlist) || '[]'); },
-  getSession() { return JSON.parse(localStorage.getItem(DB_KEYS.session) || 'null'); },
-
-  saveUsers(data) { localStorage.setItem(DB_KEYS.users, JSON.stringify(data)); },
-  saveProducts(data) { localStorage.setItem(DB_KEYS.products, JSON.stringify(data)); },
-  saveMessages(data) { localStorage.setItem(DB_KEYS.messages, JSON.stringify(data)); },
-  saveWishlist(data) { localStorage.setItem(DB_KEYS.wishlist, JSON.stringify(data)); },
-  saveSession(data) { localStorage.setItem(DB_KEYS.session, JSON.stringify(data)); },
-
-  createUser(name, email, password, course = '') {
-    const users = this.getUsers();
-    if (users.find(u => u.email === email)) return { error: 'Email already registered.' };
-    const user = {
-      id: 'u_' + Date.now(),
-      name, email,
-      password: btoa(password),
-      course, bio: '',
-      avatar: name.charAt(0).toUpperCase(),
-      joinedAt: new Date().toISOString(),
-    };
-    users.push(user);
-    this.saveUsers(users);
-    return { user };
-  },
-
-  findUser(email, password) {
-    const users = this.getUsers();
-    return users.find(u => u.email === email && u.password === btoa(password)) || null;
-  },
-
-  updateUser(id, updates) {
-    const users = this.getUsers();
-    const idx = users.findIndex(u => u.id === id);
-    if (idx === -1) return null;
-    users[idx] = { ...users[idx], ...updates };
-    this.saveUsers(users);
-    const session = this.getSession();
-    if (session && session.id === id) this.saveSession(users[idx]);
-    return users[idx];
-  },
-
-  getUserById(id) { return this.getUsers().find(u => u.id === id) || null; },
-
-  createProduct({ title, description, price, category, image, condition, sellerId, sellerName }) {
-    const products = this.getProducts();
-    const product = {
-      id: 'p_' + Date.now(),
-      title, description,
-      price: parseFloat(price),
-      category, image: image || '',
-      condition: condition || 'Good',
-      sellerId, sellerName,
-      createdAt: new Date().toISOString(),
-      views: 0,
-    };
-    products.unshift(product);
-    this.saveProducts(products);
-    return product;
-  },
-
-  updateProduct(id, updates) {
-    const products = this.getProducts();
-    const idx = products.findIndex(p => p.id === id);
-    if (idx === -1) return null;
-    products[idx] = { ...products[idx], ...updates };
-    this.saveProducts(products);
-    return products[idx];
-  },
-
-  deleteProduct(id) {
-    const products = this.getProducts().filter(p => p.id !== id);
-    this.saveProducts(products);
-  },
-
-  getProductById(id) { return this.getProducts().find(p => p.id === id) || null; },
-
-  getConversations(userId) {
-    const messages = this.getMessages();
-    const convMap = {};
-    messages.forEach(msg => {
-      if (msg.senderId !== userId && msg.receiverId !== userId) return;
-      const otherId = msg.senderId === userId ? msg.receiverId : msg.senderId;
-      const otherName = msg.senderId === userId ? msg.receiverName : msg.senderName;
-      if (!convMap[otherId]) convMap[otherId] = { userId: otherId, name: otherName, messages: [], lastAt: msg.createdAt };
-      convMap[otherId].messages.push(msg);
-      if (msg.createdAt > convMap[otherId].lastAt) convMap[otherId].lastAt = msg.createdAt;
-    });
-    return Object.values(convMap).sort((a, b) => b.lastAt.localeCompare(a.lastAt));
-  },
-
-  getThread(userAId, userBId) {
-    return this.getMessages().filter(m =>
-      (m.senderId === userAId && m.receiverId === userBId) ||
-      (m.senderId === userBId && m.receiverId === userAId)
-    ).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
-  },
-
-  sendMessage({ senderId, senderName, receiverId, receiverName, text }) {
-    const messages = this.getMessages();
-    const msg = {
-      id: 'm_' + Date.now() + '_' + Math.random().toString(36).slice(2),
-      senderId, senderName, receiverId, receiverName,
-      text, createdAt: new Date().toISOString(), read: false,
-    };
-    messages.push(msg);
-    this.saveMessages(messages);
-    return msg;
-  },
-};
+function getSession() { return JSON.parse(localStorage.getItem('tip_session') || 'null'); }
+function saveSession(data) { localStorage.setItem('tip_session', JSON.stringify(data)); }
+function getWishlist() { return JSON.parse(localStorage.getItem('tip_wishlist') || '[]'); }
+function saveWishlist(data) { localStorage.setItem('tip_wishlist', JSON.stringify(data)); }
 
 /* ════════════════════════════════════════════════════════════════
-   3. MOCK DATA SEEDER
-   ════════════════════════════════════════════════════════════════ */
-
-function seedMockData() {
-  if (localStorage.getItem(DB_KEYS.seeded)) return;
-
-  const mockUsers = [
-    { id: 'u_maria', name: 'Maria Santos', email: 'maria@tip.edu.ph', password: btoa('password123'), course: 'BS Computer Science', bio: 'CS junior, selling old textbooks and gadgets!', avatar: 'M', joinedAt: '2024-06-01T08:00:00.000Z' },
-    { id: 'u_juan', name: 'Juan Dela Cruz', email: 'juan@tip.edu.ph', password: btoa('password123'), course: 'BS Electronics Engineering', bio: 'EE student. Clean seller, fast replies!', avatar: 'J', joinedAt: '2024-06-02T09:00:00.000Z' },
-    { id: 'u_ana', name: 'Ana Reyes', email: 'ana@tip.edu.ph', password: btoa('password123'), course: 'BS Information Technology', bio: 'IT sophomore. I sell notes and used supplies.', avatar: 'A', joinedAt: '2024-06-03T10:00:00.000Z' },
-  ];
-  DB.saveUsers(mockUsers);
-
-  const now = Date.now();
-  const mockProducts = [
-    { id: 'p_mock1', title: 'Calculus Early Transcendentals (8th Ed.)', description: 'Lightly used Stewart Calculus textbook. Some highlighting on chapters 1–3 only. Complete with all pages. Perfect for Math majors.', price: 450, category: 'Books', image: '', condition: 'Good', sellerId: 'u_maria', sellerName: 'Maria Santos', createdAt: new Date(now - 86400000 * 1).toISOString(), views: 14 },
-    { id: 'p_mock2', title: 'Casio fx-991EX Classwiz Scientific Calculator', description: 'Barely used Casio calculator. All functions work perfectly. Comes with original case and manual. No scratches.', price: 650, category: 'Electronics', image: '', condition: 'Like New', sellerId: 'u_juan', sellerName: 'Juan Dela Cruz', createdAt: new Date(now - 86400000 * 2).toISOString(), views: 22 },
-    { id: 'p_mock3', title: 'TIP PE Uniform (Medium)', description: 'Official TIP PE uniform set — shirt and shorts. Worn only twice. Size medium. In great condition, no stains.', price: 280, category: 'Clothing', image: '', condition: 'Like New', sellerId: 'u_ana', sellerName: 'Ana Reyes', createdAt: new Date(now - 86400000 * 3).toISOString(), views: 8 },
-    { id: 'p_mock4', title: 'Data Structures & Algorithms Notes (Complete)', description: 'Handwritten and typed notes for the entire DSA course. Includes sample problems with solutions. Ideal for review.', price: 120, category: 'Notes', image: '', condition: 'Like New', sellerId: 'u_maria', sellerName: 'Maria Santos', createdAt: new Date(now - 86400000 * 4).toISOString(), views: 31 },
-    { id: 'p_mock5', title: 'Arduino Uno Starter Kit', description: 'Complete Arduino Uno R3 kit with breadboard, jumper wires, LEDs, resistors, and sensors. Used for one semester project.', price: 900, category: 'Electronics', image: '', condition: 'Good', sellerId: 'u_juan', sellerName: 'Juan Dela Cruz', createdAt: new Date(now - 86400000 * 5).toISOString(), views: 19 },
-    { id: 'p_mock6', title: 'Engineering Drawing Set', description: 'Complete drafting set — T-square, triangles, compass, protractor, drafting pencils. Used for one term only.', price: 350, category: 'Supplies', image: '', condition: 'Good', sellerId: 'u_ana', sellerName: 'Ana Reyes', createdAt: new Date(now - 86400000 * 6).toISOString(), views: 7 },
-    { id: 'p_mock7', title: 'Introduction to Programming (C++) Textbook', description: 'Good condition C++ programming book. Covers all basics to OOP. A few pencil marks but nothing distracting.', price: 300, category: 'Books', image: '', condition: 'Good', sellerId: 'u_juan', sellerName: 'Juan Dela Cruz', createdAt: new Date(now - 86400000 * 7).toISOString(), views: 11 },
-    { id: 'p_mock8', title: 'Laptop Stand + USB Hub Combo', description: 'Adjustable aluminum laptop stand paired with a 4-port USB 3.0 hub. Improves ergonomics during long study sessions.', price: 550, category: 'Electronics', image: '', condition: 'Like New', sellerId: 'u_maria', sellerName: 'Maria Santos', createdAt: new Date(now - 86400000 * 8).toISOString(), views: 25 },
-  ];
-  DB.saveProducts(mockProducts);
-
-  const mockMessages = [
-    { id: 'm_mock1', senderId: 'u_maria', senderName: 'Maria Santos', receiverId: 'u_juan', receiverName: 'Juan Dela Cruz', text: 'Hi Juan, is your calculator still available?', createdAt: new Date(now - 86400000 * 2).toISOString(), read: true },
-    { id: 'm_mock2', senderId: 'u_juan', senderName: 'Juan Dela Cruz', receiverId: 'u_maria', receiverName: 'Maria Santos', text: 'Yes, it is! Want to meet at the library?', createdAt: new Date(now - 86400000 * 2 + 60000).toISOString(), read: true },
-    { id: 'm_mock3', senderId: 'u_maria', senderName: 'Maria Santos', receiverId: 'u_juan', receiverName: 'Juan Dela Cruz', text: 'Sure, tomorrow at 2 PM?', createdAt: new Date(now - 86400000 * 2 + 120000).toISOString(), read: true },
-    { id: 'm_mock4', senderId: 'u_juan', senderName: 'Juan Dela Cruz', receiverId: 'u_ana', receiverName: 'Ana Reyes', text: 'Hey Ana, your PE uniform looks great!', createdAt: new Date(now - 86400000 * 1).toISOString(), read: true },
-    { id: 'm_mock5', senderId: 'u_ana', senderName: 'Ana Reyes', receiverId: 'u_juan', receiverName: 'Juan Dela Cruz', text: 'Thanks! It\'s still available. Meet at the oval?', createdAt: new Date(now - 86400000 * 1 + 60000).toISOString(), read: true },
-    { id: 'm_mock6', senderId: 'u_ana', senderName: 'Ana Reyes', receiverId: 'u_maria', receiverName: 'Maria Santos', text: 'Maria, are your DSA notes still for sale?', createdAt: new Date(now - 86400000 * 3).toISOString(), read: true },
-    { id: 'm_mock7', senderId: 'u_maria', senderName: 'Maria Santos', receiverId: 'u_ana', receiverName: 'Ana Reyes', text: 'Yes! They\'re in perfect condition.', createdAt: new Date(now - 86400000 * 3 + 60000).toISOString(), read: true },
-  ];
-  DB.saveMessages(mockMessages);
-
-  localStorage.setItem(DB_KEYS.seeded, '1');
-}
-
-/* ════════════════════════════════════════════════════════════════
-   4. STATE
+   3. STATE
    ════════════════════════════════════════════════════════════════ */
 
 let currentPage = 'home';
@@ -218,11 +59,13 @@ let activeCategory = 'All';
 let activeSort = 'newest';
 let searchQuery = '';
 let activeChatId = null;
+let activeChatName = null;
 let isAdmin = false;
 let botTypingTimer = null;
+let allProducts = []; // in-memory cache
 
 /* ════════════════════════════════════════════════════════════════
-   5. HELPERS
+   4. HELPERS
    ════════════════════════════════════════════════════════════════ */
 
 const $ = id => document.getElementById(id);
@@ -234,7 +77,6 @@ const timeAgo = iso => {
   if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
   return Math.floor(diff / 86400) + 'd ago';
 };
-const now = () => new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' });
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 function showToast(msg, type = 'info', duration = 3000) {
@@ -258,42 +100,105 @@ function categoryEmoji(cat) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   6. SESSION / AUTH
+   5. AUTH
    ════════════════════════════════════════════════════════════════ */
 
-function getSession() { return DB.getSession(); }
 function isLoggedIn() { return !!getSession() || isAdmin; }
 
 function loginAsAdmin() {
   isAdmin = true;
-  DB.saveSession({ id: '__admin__', name: 'Administrator', email: 'admin', isAdmin: true, avatar: 'A' });
+  saveSession({ id: '__admin__', name: 'Administrator', email: 'admin', isAdmin: true, avatar: 'A' });
   closeModal('auth-modal');
   updateAuthUI();
   navigateTo('admin');
   showToast('Welcome, Administrator!', 'success');
 }
 
-function login(emailOrUser, password) {
+async function login(emailOrUser, password) {
   if (emailOrUser.trim().toLowerCase() === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
     loginAsAdmin();
     return;
   }
-  const user = DB.findUser(emailOrUser, password);
-  if (!user) { showToast('Invalid email or password.', 'error'); return; }
+  // Look up user in Supabase
+  const { data: users, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('email', emailOrUser.trim().toLowerCase())
+    .limit(1);
+
+  if (error || !users || users.length === 0) {
+    showToast('Invalid email or password.', 'error');
+    return;
+  }
+
+  const user = users[0];
+  // Compare password (stored as btoa)
+  if (user.password_hash !== btoa(password)) {
+    showToast('Invalid email or password.', 'error');
+    return;
+  }
+
   isAdmin = false;
-  DB.saveSession(user);
+  const sessionUser = {
+    id: user.user_id,
+    name: user.full_name,
+    email: user.email,
+    course: user.course || '',
+    bio: user.bio || '',
+    avatar: user.full_name.charAt(0).toUpperCase(),
+  };
+  saveSession(sessionUser);
   closeModal('auth-modal');
   updateAuthUI();
   navigateTo('home');
-  showToast(`Welcome back, ${user.name.split(' ')[0]}! 👋`, 'success');
+  showToast(`Welcome back, ${user.full_name.split(' ')[0]}! 👋`, 'success');
 }
 
-function register(name, email, password, course) {
+async function register(name, email, password, course) {
   if (password.length < 6) { showToast('Password must be at least 6 characters.', 'error'); return; }
-  const result = DB.createUser(name, email, password, course);
-  if (result.error) { showToast(result.error, 'error'); return; }
+
+  // Check if email already exists
+  const { data: existing } = await supabase
+    .from('users')
+    .select('user_id')
+    .eq('email', email.trim().toLowerCase())
+    .limit(1);
+
+  if (existing && existing.length > 0) {
+    showToast('Email already registered.', 'error');
+    return;
+  }
+
+  const newUser = {
+    full_name: name,
+    email: email.trim().toLowerCase(),
+    password_hash: btoa(password),
+    course: course || '',
+    bio: '',
+  };
+
+  const { data, error } = await supabase
+    .from('users')
+    .insert([newUser])
+    .select()
+    .single();
+
+  if (error) {
+    showToast('Registration failed. Try again.', 'error');
+    console.error(error);
+    return;
+  }
+
   isAdmin = false;
-  DB.saveSession(result.user);
+  const sessionUser = {
+    id: data.user_id,
+    name: data.full_name,
+    email: data.email,
+    course: data.course || '',
+    bio: data.bio || '',
+    avatar: data.full_name.charAt(0).toUpperCase(),
+  };
+  saveSession(sessionUser);
   closeModal('auth-modal');
   updateAuthUI();
   navigateTo('home');
@@ -302,13 +207,13 @@ function register(name, email, password, course) {
 
 function logout() {
   isAdmin = false;
-  DB.saveSession(null);
+  saveSession(null);
   updateAuthUI();
   navigateTo('home');
   showToast('Signed out successfully.', 'info');
 }
 
-function updateAuthUI() {
+async function updateAuthUI() {
   const session = getSession();
   const loggedIn = !!session;
 
@@ -324,14 +229,16 @@ function updateAuthUI() {
     el.textContent = session?.avatar || '◉';
   });
 
-  const products = DB.getProducts();
-  const users = DB.getUsers();
-  const sL = $('stat-listings'); if (sL) sL.textContent = products.length;
-  const sU = $('stat-users'); if (sU) sU.textContent = users.length;
+  // Fetch stats from Supabase
+  const { count: listingCount } = await supabase.from('listings').select('*', { count: 'exact', head: true });
+  const { count: userCount } = await supabase.from('users').select('*', { count: 'exact', head: true });
+
+  const sL = $('stat-listings'); if (sL) sL.textContent = listingCount || 0;
+  const sU = $('stat-users'); if (sU) sU.textContent = userCount || 0;
 }
 
 /* ════════════════════════════════════════════════════════════════
-   7. NAVIGATION
+   6. NAVIGATION
    ════════════════════════════════════════════════════════════════ */
 
 function navigateTo(page) {
@@ -365,11 +272,35 @@ function navigateTo(page) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   8. PRODUCTS — RENDER
+   7. PRODUCTS — FETCH & RENDER
    ════════════════════════════════════════════════════════════════ */
 
+async function fetchProducts() {
+  const { data, error } = await supabase
+    .from('listings')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) { console.error('fetchProducts error:', error); return []; }
+
+  // Normalize column names to match existing UI code
+  return (data || []).map(p => ({
+    id: p.listing_id || p.id,
+    title: p.title,
+    description: p.description,
+    price: p.price,
+    category: p.category,
+    image: p.image || '',
+    condition: p.condition || 'Good',
+    sellerId: p.seller_id,
+    sellerName: p.seller_name,
+    createdAt: p.created_at,
+    views: p.views || 0,
+  }));
+}
+
 function getFilteredProducts() {
-  let products = DB.getProducts();
+  let products = [...allProducts];
   if (activeCategory !== 'All') products = products.filter(p => p.category === activeCategory);
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
@@ -391,7 +322,7 @@ function getFilteredProducts() {
 
 function productCardHTML(p, delay = 0) {
   const session = getSession();
-  const wishlist = DB.getWishlist();
+  const wishlist = getWishlist();
   const saved = wishlist.includes(p.id);
   const isOwner = session && session.id === p.sellerId;
 
@@ -426,10 +357,14 @@ function productCardHTML(p, delay = 0) {
     </div>`;
 }
 
-function renderProducts() {
+async function renderProducts() {
   const grid = $('products-grid');
   if (!grid) return;
+  grid.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text-muted)">Loading listings...</div>`;
+
+  allProducts = await fetchProducts();
   const products = getFilteredProducts();
+
   if (!products.length) {
     grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><h3>No listings found</h3><p style="color:var(--text-muted);margin-top:8px;font-size:0.85rem">Try a different filter or search term</p></div>`;
     return;
@@ -439,13 +374,16 @@ function renderProducts() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   9. PRODUCT MODAL
+   8. PRODUCT MODAL
    ════════════════════════════════════════════════════════════════ */
 
-function openProductModal(id) {
-  const p = DB.getProductById(id);
+async function openProductModal(id) {
+  const p = allProducts.find(x => x.id === id);
   if (!p) return;
-  DB.updateProduct(id, { views: (p.views || 0) + 1 });
+
+  // Increment views in Supabase
+  await supabase.from('listings').update({ views: (p.views || 0) + 1 }).eq('listing_id', id);
+
   const session = getSession();
   const isOwner = session && session.id === p.sellerId;
   const imageHTML = p.image
@@ -483,7 +421,7 @@ function openProductModal(id) {
 window.openProductModal = openProductModal;
 
 /* ════════════════════════════════════════════════════════════════
-   10. UPLOAD / EDIT PRODUCT
+   9. UPLOAD / EDIT PRODUCT
    ════════════════════════════════════════════════════════════════ */
 
 function setupUploadForm() {
@@ -518,20 +456,26 @@ function setupUploadForm() {
 
   const form = $('upload-form');
   if (form) {
-    form.addEventListener('submit', e => {
+    form.addEventListener('submit', async e => {
       e.preventDefault();
       const session = getSession();
       if (!session || session.isAdmin) { showToast('Only students can list items.', 'error'); return; }
-      DB.createProduct({
+
+      const newListing = {
         title: $('product-title').value.trim(),
         description: $('product-desc').value.trim(),
-        price: $('product-price').value,
+        price: parseFloat($('product-price').value),
         category: $('product-category').value,
         condition: $('product-condition').value,
         image: $('img-preview')?.src?.startsWith('data:') ? $('img-preview').src : '',
-        sellerId: session.id,
-        sellerName: session.name,
-      });
+        seller_id: session.id,
+        seller_name: session.name,
+        views: 0,
+      };
+
+      const { error } = await supabase.from('listings').insert([newListing]);
+      if (error) { showToast('Failed to post listing.', 'error'); console.error(error); return; }
+
       form.reset();
       if (preview) { preview.classList.remove('visible'); preview.src = ''; }
       if (zone) {
@@ -547,7 +491,7 @@ function setupUploadForm() {
 }
 
 function openEditProductModal(id) {
-  const p = DB.getProductById(id);
+  const p = allProducts.find(x => x.id === id);
   if (!p) return;
   $('edit-product-id').value = id;
   $('edit-product-title').value = p.title;
@@ -559,10 +503,11 @@ function openEditProductModal(id) {
 }
 window.openEditProductModal = openEditProductModal;
 
-function deleteOwnProduct(id) {
-  showConfirm('Delete Listing', 'Are you sure you want to delete this listing? This cannot be undone.', () => {
-    DB.deleteProduct(id);
-    renderProducts();
+async function deleteOwnProduct(id) {
+  showConfirm('Delete Listing', 'Are you sure you want to delete this listing? This cannot be undone.', async () => {
+    const { error } = await supabase.from('listings').delete().eq('listing_id', id);
+    if (error) { showToast('Failed to delete listing.', 'error'); console.error(error); return; }
+    await renderProducts();
     if (currentPage === 'profile') renderProfilePage();
     if (currentPage === 'admin') renderAdminDashboard();
     showToast('Listing deleted.', 'info');
@@ -571,33 +516,33 @@ function deleteOwnProduct(id) {
 window.deleteOwnProduct = deleteOwnProduct;
 
 /* ════════════════════════════════════════════════════════════════
-   11. WISHLIST
+   10. WISHLIST (still localStorage — it's per-user/device)
    ════════════════════════════════════════════════════════════════ */
 
 function toggleWishlist(id, btn) {
   const session = getSession();
   if (!session || session.isAdmin) { showToast('Sign in to save items.', 'info'); return; }
-  let list = DB.getWishlist();
+  let list = getWishlist();
   const idx = list.indexOf(id);
   if (idx > -1) { list.splice(idx, 1); showToast('Removed from saved items.', 'info'); if (btn) { btn.textContent = '☆'; btn.classList.remove('saved'); } }
   else { list.push(id); showToast('Item saved! ★', 'success'); if (btn) { btn.textContent = '★'; btn.classList.add('saved'); } }
-  DB.saveWishlist(list);
+  saveWishlist(list);
 }
 window.toggleWishlist = toggleWishlist;
 
 function toggleWishlistById(id) {
   const session = getSession();
   if (!session || session.isAdmin) { showToast('Sign in to save items.', 'info'); return; }
-  let list = DB.getWishlist();
+  let list = getWishlist();
   const idx = list.indexOf(id);
   if (idx > -1) { list.splice(idx, 1); showToast('Removed from saved items.', 'info'); }
   else { list.push(id); showToast('Item saved! ★', 'success'); }
-  DB.saveWishlist(list);
+  saveWishlist(list);
 }
 window.toggleWishlistById = toggleWishlistById;
 
 /* ════════════════════════════════════════════════════════════════
-   12. CHAT
+   11. CHAT
    ════════════════════════════════════════════════════════════════ */
 
 function startChatWithSeller(sellerId, sellerName, productId) {
@@ -605,12 +550,13 @@ function startChatWithSeller(sellerId, sellerName, productId) {
   if (!session || session.isAdmin) { openModal('auth-modal'); showToast('Sign in to message sellers.', 'info'); return; }
   if (session.id === sellerId) { showToast('That\'s your own listing!', 'info'); return; }
   activeChatId = sellerId;
+  activeChatName = sellerName;
   navigateTo('chat');
   setTimeout(() => openThread(sellerId, sellerName), 100);
 }
 window.startChatWithSeller = startChatWithSeller;
 
-function renderChat() {
+async function renderChat() {
   const session = getSession();
   if (!session || session.isAdmin) {
     const chatSection = $('page-chat');
@@ -622,30 +568,48 @@ function renderChat() {
       </div>`;
     return;
   }
-  const convos = DB.getConversations(session.id);
+
+  const { data: messages, error } = await supabase
+    .from('messages')
+    .select('*')
+    .or(`sender_id.eq.${session.id},receiver_id.eq.${session.id}`)
+    .order('created_at', { ascending: false });
+
+  if (error) { console.error(error); return; }
+
   const list = $('chat-list');
   if (!list) return;
-  if (!convos.length) {
+
+  if (!messages || messages.length === 0) {
     list.innerHTML = `<div style="text-align:center;padding:40px 16px;color:var(--text-muted);font-size:0.85rem">No conversations yet.<br>Browse listings and message a seller!</div>`;
     return;
   }
-  list.innerHTML = convos.map(c => {
-    const lastMsg = c.messages[c.messages.length - 1];
-    return `
-      <div class="chat-list-item ${activeChatId === c.userId ? 'active' : ''}" onclick="openThread('${esc(c.userId)}','${esc(c.name)}')">
-        <div class="chat-avatar">${esc(c.name.charAt(0))}</div>
-        <div class="chat-list-info">
-          <div class="chat-list-name">${esc(c.name)}</div>
-          <div class="chat-list-preview">${esc(lastMsg?.text || 'Start a conversation')}</div>
-        </div>
-      </div>`;
-  }).join('');
+
+  // Build conversation map
+  const convMap = {};
+  messages.forEach(msg => {
+    const otherId = msg.sender_id === session.id ? msg.receiver_id : msg.sender_id;
+    const otherName = msg.sender_id === session.id ? msg.receiver_name : msg.sender_name;
+    if (!convMap[otherId]) convMap[otherId] = { userId: otherId, name: otherName, lastMsg: msg.text, lastAt: msg.created_at };
+  });
+
+  const convos = Object.values(convMap).sort((a, b) => b.lastAt.localeCompare(a.lastAt));
+  list.innerHTML = convos.map(c => `
+    <div class="chat-list-item ${activeChatId === c.userId ? 'active' : ''}" onclick="openThread('${esc(c.userId)}','${esc(c.name)}')">
+      <div class="chat-avatar">${esc(c.name.charAt(0))}</div>
+      <div class="chat-list-info">
+        <div class="chat-list-name">${esc(c.name)}</div>
+        <div class="chat-list-preview">${esc(c.lastMsg || '')}</div>
+      </div>
+    </div>`).join('');
 }
 
-function openThread(userId, userName) {
+async function openThread(userId, userName) {
   const session = getSession();
   if (!session) return;
   activeChatId = userId;
+  activeChatName = userName;
+
   const header = $('chat-header-content');
   if (header) {
     header.innerHTML = `
@@ -655,19 +619,27 @@ function openThread(userId, userName) {
         <div style="font-size:0.72rem;color:var(--success)">● Online</div>
       </div>`;
   }
+
+  const { data: thread, error } = await supabase
+    .from('messages')
+    .select('*')
+    .or(`and(sender_id.eq.${session.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${session.id})`)
+    .order('created_at', { ascending: true });
+
+  if (error) { console.error(error); return; }
+
   const messagesEl = $('chat-messages');
-  const thread = DB.getThread(session.id, userId);
-  if (thread.length === 0) {
+  if (!thread || thread.length === 0) {
     messagesEl.innerHTML = `<div class="chat-empty" id="chat-empty">
       <div class="chat-empty-icon">💬</div>
       <p>Start the conversation with ${esc(userName)}!</p>
     </div>`;
   } else {
     messagesEl.innerHTML = thread.map(m => {
-      const sent = m.senderId === session.id;
+      const sent = m.sender_id === session.id;
       return `<div class="chat-bubble ${sent ? 'sent' : 'received'}">
         ${esc(m.text)}
-        <span class="bubble-time">${new Date(m.createdAt).toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' })}</span>
+        <span class="bubble-time">${new Date(m.created_at).toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' })}</span>
       </div>`;
     }).join('');
   }
@@ -678,34 +650,57 @@ function openThread(userId, userName) {
   renderChatSidebar(userId);
 }
 
-function renderChatSidebar(activeId) {
+async function renderChatSidebar(activeId) {
   const session = getSession();
-  const convos = DB.getConversations(session.id);
+  const { data: messages } = await supabase
+    .from('messages')
+    .select('*')
+    .or(`sender_id.eq.${session.id},receiver_id.eq.${session.id}`)
+    .order('created_at', { ascending: false });
+
+  if (!messages) return;
+  const convMap = {};
+  messages.forEach(msg => {
+    const otherId = msg.sender_id === session.id ? msg.receiver_id : msg.sender_id;
+    const otherName = msg.sender_id === session.id ? msg.receiver_name : msg.sender_name;
+    if (!convMap[otherId]) convMap[otherId] = { userId: otherId, name: otherName, lastMsg: msg.text };
+  });
+
   const list = $('chat-list');
-  if (!list || !convos.length) return;
+  if (!list) return;
+  const convos = Object.values(convMap);
   list.innerHTML = convos.map(c => `
     <div class="chat-list-item ${activeId === c.userId ? 'active' : ''}" onclick="openThread('${esc(c.userId)}','${esc(c.name)}')">
       <div class="chat-avatar">${esc(c.name.charAt(0))}</div>
       <div class="chat-list-info">
         <div class="chat-list-name">${esc(c.name)}</div>
-        <div class="chat-list-preview">${esc(c.messages[c.messages.length - 1]?.text || '')}</div>
+        <div class="chat-list-preview">${esc(c.lastMsg || '')}</div>
       </div>
     </div>`).join('');
 }
 
-function sendMessage() {
+async function sendMessage() {
   const session = getSession();
   if (!session || !activeChatId) return;
   const input = $('chat-input');
   const text = input?.value?.trim();
   if (!text) return;
-  const convos = DB.getConversations(session.id);
-  const convo = convos.find(c => c.userId === activeChatId);
-  const receiverName = convo?.name || 'Seller';
-  DB.sendMessage({ senderId: session.id, senderName: session.name, receiverId: activeChatId, receiverName, text });
+
+  const msg = {
+    sender_id: session.id,
+    sender_name: session.name,
+    receiver_id: activeChatId,
+    receiver_name: activeChatName || 'Seller',
+    text,
+    read: false,
+  };
+
+  const { error } = await supabase.from('messages').insert([msg]);
+  if (error) { showToast('Failed to send message.', 'error'); console.error(error); return; }
+
   input.value = '';
-  openThread(activeChatId, receiverName);
-  triggerBotResponse(activeChatId, receiverName, session);
+  await openThread(activeChatId, activeChatName || 'Seller');
+  triggerBotResponse(activeChatId, activeChatName || 'Seller', session);
 }
 
 function triggerBotResponse(sellerId, sellerName, session) {
@@ -718,21 +713,30 @@ function triggerBotResponse(sellerId, sellerName, session) {
   messagesEl.appendChild(typingEl);
   messagesEl.scrollTop = messagesEl.scrollHeight;
   const delay = 2500 + Math.random() * 1500;
-  botTypingTimer = setTimeout(() => {
+  botTypingTimer = setTimeout(async () => {
     document.getElementById('typing-indicator')?.remove();
     const responses = BOT_RESPONSES[sellerName] || BOT_RESPONSES.default;
     const reply = responses[Math.floor(Math.random() * responses.length)];
-    DB.sendMessage({ senderId: sellerId, senderName: sellerName, receiverId: session.id, receiverName: session.name, text: reply });
-    openThread(sellerId, sellerName);
+    await supabase.from('messages').insert([{
+      sender_id: sellerId,
+      sender_name: sellerName,
+      receiver_id: session.id,
+      receiver_name: session.name,
+      text: reply,
+      read: false,
+    }]);
+    await openThread(sellerId, sellerName);
     botTypingTimer = null;
   }, delay);
 }
 
+window.openThread = openThread;
+
 /* ════════════════════════════════════════════════════════════════
-   13. PROFILE PAGE
+   12. PROFILE PAGE
    ════════════════════════════════════════════════════════════════ */
 
-function renderProfilePage() {
+async function renderProfilePage() {
   const session = getSession();
   if (!session || session.isAdmin) return;
   const header = $('profile-header-info');
@@ -749,17 +753,33 @@ function renderProfilePage() {
         </div>
       </div>`;
   }
-  const myProducts = DB.getProducts().filter(p => p.sellerId === session.id);
+
+  // My listings from Supabase
+  const { data: myProducts } = await supabase
+    .from('listings')
+    .select('*')
+    .eq('seller_id', session.id)
+    .order('created_at', { ascending: false });
+
+  const myMapped = (myProducts || []).map(p => ({
+    id: p.listing_id || p.id, title: p.title, description: p.description,
+    price: p.price, category: p.category, image: p.image || '',
+    condition: p.condition || 'Good', sellerId: p.seller_id,
+    sellerName: p.seller_name, createdAt: p.created_at, views: p.views || 0,
+  }));
+
   const listingsEl = $('my-listings-content');
   if (listingsEl) {
-    if (!myProducts.length) {
+    if (!myMapped.length) {
       listingsEl.innerHTML = `<div class="empty-state"><div class="empty-icon">📦</div><h3>No listings yet</h3><p style="color:var(--text-muted);margin-top:8px;font-size:0.85rem">Post your first item for sale!</p></div>`;
     } else {
-      listingsEl.innerHTML = `<div class="products-grid" style="padding:0">${myProducts.map(p => productCardHTML(p)).join('')}</div>`;
+      listingsEl.innerHTML = `<div class="products-grid" style="padding:0">${myMapped.map(p => productCardHTML(p)).join('')}</div>`;
     }
   }
-  const wishlist = DB.getWishlist();
-  const savedItems = DB.getProducts().filter(p => wishlist.includes(p.id));
+
+  // Saved/wishlist (still localStorage)
+  const wishlist = getWishlist();
+  const savedItems = allProducts.filter(p => wishlist.includes(p.id));
   const savedEl = $('saved-content');
   if (savedEl) {
     if (!savedItems.length) {
@@ -768,6 +788,7 @@ function renderProfilePage() {
       savedEl.innerHTML = `<div class="products-grid" style="padding:0">${savedItems.map(p => productCardHTML(p)).join('')}</div>`;
     }
   }
+
   const nameInput = $('edit-name');
   const emailInput = $('edit-email');
   const courseInput = $('edit-course');
@@ -779,47 +800,49 @@ function renderProfilePage() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   14. ADMIN DASHBOARD
+   13. ADMIN DASHBOARD
    ════════════════════════════════════════════════════════════════ */
 
-function renderAdminDashboard() {
-  const products = DB.getProducts();
-  const users = DB.getUsers();
-  const messages = DB.getMessages();
+async function renderAdminDashboard() {
+  const { data: products } = await supabase.from('listings').select('*').order('created_at', { ascending: false });
+  const { data: users } = await supabase.from('users').select('*').order('joined_at', { ascending: false });
+  const { count: msgCount } = await supabase.from('messages').select('*', { count: 'exact', head: true });
+
+  const mappedProducts = (products || []).map(p => ({
+    id: p.listing_id || p.id, title: p.title, description: p.description,
+    price: p.price, category: p.category, image: p.image || '',
+    condition: p.condition || 'Good', sellerId: p.seller_id,
+    sellerName: p.seller_name, createdAt: p.created_at, views: p.views || 0,
+  }));
 
   const el = id => $(id);
-  if (el('admin-total-listings')) el('admin-total-listings').textContent = products.length;
-  if (el('admin-total-users')) el('admin-total-users').textContent = users.length;
-  if (el('admin-total-messages')) el('admin-total-messages').textContent = messages.length;
+  if (el('admin-total-listings')) el('admin-total-listings').textContent = mappedProducts.length;
+  if (el('admin-total-users')) el('admin-total-users').textContent = (users || []).length;
+  if (el('admin-total-messages')) el('admin-total-messages').textContent = msgCount || 0;
 
   const catCounts = {};
-  products.forEach(p => { catCounts[p.category] = (catCounts[p.category] || 0) + 1; });
+  mappedProducts.forEach(p => { catCounts[p.category] = (catCounts[p.category] || 0) + 1; });
   const topCat = Object.entries(catCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || '—';
   if (el('admin-top-category')) el('admin-top-category').textContent = topCat;
 
-  renderAdminTable(products);
+  renderAdminTable(mappedProducts);
 
-  /* ── Users Table ── */
   const usersBody = $('admin-users-body');
   if (usersBody) {
-    if (!users.length) {
+    if (!users || !users.length) {
       usersBody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px">No users yet</td></tr>`;
       return;
     }
     usersBody.innerHTML = users.map(u => {
-      const userListings = products.filter(p => p.sellerId === u.id).length;
-      const isMockUser = ['u_maria', 'u_juan', 'u_ana'].includes(u.id);
+      const userListings = mappedProducts.filter(p => p.sellerId === u.user_id).length;
       return `<tr>
-        <td><strong>${esc(u.name)}</strong></td>
+        <td><strong>${esc(u.full_name)}</strong></td>
         <td style="color:var(--text-secondary)">${esc(u.email)}</td>
         <td style="color:var(--text-secondary)">${esc(u.course || '—')}</td>
-        <td style="color:var(--text-muted)">${timeAgo(u.joinedAt)}</td>
+        <td style="color:var(--text-muted)">${timeAgo(u.joined_at || u.joinedAt)}</td>
         <td><span class="badge badge-category">${userListings}</span></td>
         <td>
-          ${isMockUser
-          ? `<span style="font-size:0.72rem;color:var(--text-muted)">Demo</span>`
-          : `<button class="btn btn-danger" style="padding:5px 12px;font-size:0.75rem;cursor:pointer" onclick="adminDeleteUser('${esc(u.id)}')">🗑 Delete</button>`
-        }
+          <button class="btn btn-danger" style="padding:5px 12px;font-size:0.75rem;cursor:pointer" onclick="adminDeleteUser('${esc(u.user_id)}')">🗑 Delete</button>
         </td>
       </tr>`;
     }).join('');
@@ -851,10 +874,10 @@ function renderAdminTable(products) {
   }).join('') || `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:32px">No listings found</td></tr>`;
 }
 
-function adminDeleteProduct(id) {
-  showConfirm('Remove Listing', 'Remove this listing from the marketplace? This action cannot be undone.', () => {
-    DB.deleteProduct(id);
-    renderAdminDashboard();
+async function adminDeleteProduct(id) {
+  showConfirm('Remove Listing', 'Remove this listing from the marketplace? This action cannot be undone.', async () => {
+    await supabase.from('listings').delete().eq('listing_id', id);
+    await renderAdminDashboard();
     showToast('Listing removed.', 'success');
   });
 }
@@ -865,31 +888,30 @@ function adminEditProduct(id) {
 }
 window.adminEditProduct = adminEditProduct;
 
-/* ── Delete User ────────────────────────────────────────────── */
-function adminDeleteUser(userId) {
+async function adminDeleteUser(userId) {
   const session = getSession();
   if (!session || !session.isAdmin) { showToast('Access denied.', 'error'); return; }
 
-  const users = DB.getUsers();
-  const user = users.find(u => u.id === userId);
+  const { data: users } = await supabase.from('users').select('*').eq('user_id', userId).limit(1);
+  const user = users?.[0];
   if (!user) { showToast('User not found.', 'error'); return; }
 
   showConfirm(
     '🗑 Delete User',
-    `Delete "${user.name}" (${user.email})? This will also remove all their listings and messages. This cannot be undone.`,
-    () => {
-      DB.saveUsers(DB.getUsers().filter(u => u.id !== userId));
-      DB.saveProducts(DB.getProducts().filter(p => p.sellerId !== userId));
-      DB.saveMessages(DB.getMessages().filter(m => m.senderId !== userId && m.receiverId !== userId));
-      renderAdminDashboard();
-      showToast(`User "${user.name}" deleted successfully.`, 'success');
+    `Delete "${user.full_name}" (${user.email})? This will also remove all their listings and messages.`,
+    async () => {
+      await supabase.from('messages').delete().or(`sender_id.eq.${userId},receiver_id.eq.${userId}`);
+      await supabase.from('listings').delete().eq('seller_id', userId);
+      await supabase.from('users').delete().eq('user_id', userId);
+      await renderAdminDashboard();
+      showToast(`User "${user.full_name}" deleted successfully.`, 'success');
     }
   );
 }
 window.adminDeleteUser = adminDeleteUser;
 
 /* ════════════════════════════════════════════════════════════════
-   15. MODALS
+   14. MODALS
    ════════════════════════════════════════════════════════════════ */
 
 function openModal(id) {
@@ -914,7 +936,7 @@ function showConfirm(title, message, onConfirm) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   16. EVENT LISTENERS
+   15. EVENT LISTENERS
    ════════════════════════════════════════════════════════════════ */
 
 function setupEventListeners() {
@@ -987,32 +1009,43 @@ function setupEventListeners() {
     });
   });
 
-  $('edit-product-form')?.addEventListener('submit', e => {
+  $('edit-product-form')?.addEventListener('submit', async e => {
     e.preventDefault();
     const id = $('edit-product-id').value;
-    DB.updateProduct(id, {
+    const { error } = await supabase.from('listings').update({
       title: $('edit-product-title').value.trim(),
       category: $('edit-product-category').value,
       condition: $('edit-product-condition').value,
       description: $('edit-product-desc').value.trim(),
       price: parseFloat($('edit-product-price').value),
-    });
+    }).eq('listing_id', id);
+    if (error) { showToast('Failed to update listing.', 'error'); console.error(error); return; }
     closeModal('edit-product-modal');
-    renderProducts();
+    await renderProducts();
     if (currentPage === 'profile') renderProfilePage();
     showToast('Listing updated! ✓', 'success');
   });
 
-  $('edit-profile-form')?.addEventListener('submit', e => {
+  $('edit-profile-form')?.addEventListener('submit', async e => {
     e.preventDefault();
     const session = getSession();
     if (!session) return;
-    DB.updateUser(session.id, {
-      name: $('edit-name').value.trim(),
+    const updates = {
+      full_name: $('edit-name').value.trim(),
       course: $('edit-course')?.value.trim() || '',
       bio: $('edit-bio')?.value.trim() || '',
-      avatar: $('edit-name').value.trim().charAt(0).toUpperCase(),
-    });
+    };
+    const { error } = await supabase.from('users').update(updates).eq('user_id', session.id);
+    if (error) { showToast('Failed to update profile.', 'error'); console.error(error); return; }
+    // Update local session
+    const updatedSession = {
+      ...session,
+      name: updates.full_name,
+      course: updates.course,
+      bio: updates.bio,
+      avatar: updates.full_name.charAt(0).toUpperCase(),
+    };
+    saveSession(updatedSession);
     updateAuthUI();
     renderProfilePage();
     showToast('Profile updated! ✓', 'success');
@@ -1028,7 +1061,16 @@ function setupEventListeners() {
     });
   });
 
-  $('admin-search')?.addEventListener('input', () => renderAdminTable(DB.getProducts()));
+  $('admin-search')?.addEventListener('input', async () => {
+    const { data: products } = await supabase.from('listings').select('*');
+    const mapped = (products || []).map(p => ({
+      id: p.listing_id || p.id, title: p.title, description: p.description,
+      price: p.price, category: p.category, image: p.image || '',
+      condition: p.condition || 'Good', sellerId: p.seller_id,
+      sellerName: p.seller_name, createdAt: p.created_at, views: p.views || 0,
+    }));
+    renderAdminTable(mapped);
+  });
 
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); });
@@ -1046,11 +1088,10 @@ function setupEventListeners() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   17. INIT
+   16. INIT
    ════════════════════════════════════════════════════════════════ */
 
-function init() {
-  seedMockData();
+async function init() {
   setupEventListeners();
   setupUploadForm();
 
