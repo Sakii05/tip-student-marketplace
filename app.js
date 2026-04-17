@@ -473,7 +473,6 @@ function setupUploadForm() {
         title: $('product-title').value.trim(),
         description: $('product-desc').value.trim(),
         price: parseFloat($('product-price').value),
-        category: $('product-category').value,
         item_condition: $('product-condition').value,
         seller_id: session.id,
       };
@@ -1032,7 +1031,6 @@ function setupEventListeners() {
     const id = $('edit-product-id').value;
     const { error } = await supabase.from('listings').update({
       title: $('edit-product-title').value.trim(),
-      category: $('edit-product-category').value,
       item_condition: $('edit-product-condition').value,
       description: $('edit-product-desc').value.trim(),
       price: parseFloat($('edit-product-price').value),
