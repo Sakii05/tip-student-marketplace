@@ -478,8 +478,13 @@ function setupUploadForm() {
         seller_id: session.id,
       };
 
-      const { error } = await supabase.from('listings').insert([newListing]);
-      if (error) { showToast('Failed to post listing.', 'error'); console.error(error); return; }
+      const { error, data: insertedData } = await supabase.from('listings').insert([newListing]);
+      if (error) { 
+        showToast(`Failed to post listing: ${error.message}`, 'error'); 
+        console.error('Supabase insert error:', error);
+        console.error('Insert payload:', newListing);
+        return; 
+      }
 
       form.reset();
       if (preview) { preview.classList.remove('visible'); preview.src = ''; }
@@ -706,7 +711,12 @@ async function sendMessage() {
   };
 
   const { error } = await supabase.from('messages').insert([msg]);
-  if (error) { showToast('Failed to send message.', 'error'); console.error(error); return; }
+  if (error) { 
+    showToast(`Failed to send message: ${error.message}`, 'error'); 
+    console.error('Message insert error:', error);
+    console.error('Message payload:', msg);
+    return; 
+  }
 
   input.value = '';
   await openThread(activeChatId, activeChatName || 'Seller');
@@ -1027,7 +1037,11 @@ function setupEventListeners() {
       description: $('edit-product-desc').value.trim(),
       price: parseFloat($('edit-product-price').value),
     }).eq('listing_id', id);
-    if (error) { showToast('Failed to update listing.', 'error'); console.error(error); return; }
+    if (error) { 
+      showToast(`Failed to update listing: ${error.message}`, 'error'); 
+      console.error('Update error:', error);
+      return; 
+    }
     closeModal('edit-product-modal');
     await renderProducts();
     if (currentPage === 'profile') renderProfilePage();
