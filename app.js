@@ -283,20 +283,28 @@ async function fetchProducts() {
 
   if (error) { console.error('fetchProducts error:', error); return []; }
 
-  // Normalize column names to match existing UI code
-  return (data || []).map(p => ({
-    id: p.listing_id || p.id,
-    title: p.title,
-    description: p.description,
-    price: p.price,
-    category: p.category,
-    image: p.image || '',
-    condition: p.condition || 'Good',
-    sellerId: p.seller_id,
-    sellerName: p.seller_name,
-    createdAt: p.created_at,
-    views: p.views || 0,
+  // Normalize column names and fetch seller info
+  const productsWithSellers = await Promise.all((data || []).map(async p => {
+    let sellerName = 'Seller';
+    if (p.seller_id) {
+      const { data: seller } = await supabase.from('users').select('full_name').eq('user_id', p.seller_id).single();
+      sellerName = seller?.full_name || 'Seller';
+    }
+    return {
+      id: p.listing_id || p.id,
+      title: p.title,
+      description: p.description,
+      price: p.price,
+      category: p.category,
+      image: p.image || '',
+      condition: p.condition || 'Good',
+      sellerId: p.seller_id,
+      sellerName: sellerName,
+      createdAt: p.created_at,
+      views: p.views || 0,
+    };
   }));
+  return productsWithSellers;
 }
 
 function getFilteredProducts() {
@@ -469,16 +477,7 @@ function setupUploadForm() {
         condition: $('product-condition').value,
         image: $('img-preview')?.src?.startsWith('data:') ? $('img-preview').src : '',
         seller_id: session.id,
-        seller_name: session.name,
-        views: 0,
-      };
 
-      const { error } = await supabase.from('listings').insert([newListing]);
-      if (error) { showToast('Failed to post listing.', 'error'); console.error(error); return; }
-
-      form.reset();
-      if (preview) { preview.classList.remove('visible'); preview.src = ''; }
-      if (zone) {
         zone.querySelector('.upload-icon').style.display = '';
         zone.querySelector('.upload-text').textContent = 'Click to upload or drag & drop';
       }
@@ -571,9 +570,9 @@ async function renderChat() {
 
   const { data: messages, error } = await supabase
     .from('messages')
-    .select('*')
+    .select('*, sender_id(*), receiver_id(*)')
     .or(`sender_id.eq.${session.id},receiver_id.eq.${session.id}`)
-    .order('created_at', { ascending: false });
+    .order('sent_at', { ascending: false });
 
   if (error) { console.error(error); return; }
 
@@ -587,10 +586,15 @@ async function renderChat() {
 
   // Build conversation map
   const convMap = {};
-  messages.forEach(msg => {
+  messages.forEach(async msg => {
     const otherId = msg.sender_id === session.id ? msg.receiver_id : msg.sender_id;
-    const otherName = msg.sender_id === session.id ? msg.receiver_name : msg.sender_name;
-    if (!convMap[otherId]) convMap[otherId] = { userId: otherId, name: otherName, lastMsg: msg.text, lastAt: msg.created_at };
+    // Fetch seller/user info for the other person
+    let otherName = 'Seller';
+    if (otherId) {
+      const { data: otherUser } = await supabase.from('users').select('full_name').eq('user_id', otherId).single();
+      otherName = otherUser?.full_name || 'Seller';
+    }
+    if (!convMap[otherId]) convMap[otherId] = { userId: otherId, name: otherName, lastMsg: msg.content, lastAt: msg.sent_at };
   });
 
   const convos = Object.values(convMap).sort((a, b) => b.lastAt.localeCompare(a.lastAt));
@@ -624,7 +628,7 @@ async function openThread(userId, userName) {
     .from('messages')
     .select('*')
     .or(`and(sender_id.eq.${session.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${session.id})`)
-    .order('created_at', { ascending: true });
+    .order('sent_at', { ascending: true });
 
   if (error) { console.error(error); return; }
 
@@ -638,8 +642,8 @@ async function openThread(userId, userName) {
     messagesEl.innerHTML = thread.map(m => {
       const sent = m.sender_id === session.id;
       return `<div class="chat-bubble ${sent ? 'sent' : 'received'}">
-        ${esc(m.text)}
-        <span class="bubble-time">${new Date(m.created_at).toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' })}</span>
+        ${esc(m.content)}
+        <span class="bubble-time">${new Date(m.sent_at).toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' })}</span>
       </div>`;
     }).join('');
   }
@@ -656,15 +660,17 @@ async function renderChatSidebar(activeId) {
     .from('messages')
     .select('*')
     .or(`sender_id.eq.${session.id},receiver_id.eq.${session.id}`)
-    .order('created_at', { ascending: false });
+    .order('sent_at', { ascending: false });
 
   if (!messages) return;
   const convMap = {};
-  messages.forEach(msg => {
+  for (const msg of messages) {
     const otherId = msg.sender_id === session.id ? msg.receiver_id : msg.sender_id;
-    const otherName = msg.sender_id === session.id ? msg.receiver_name : msg.sender_name;
-    if (!convMap[otherId]) convMap[otherId] = { userId: otherId, name: otherName, lastMsg: msg.text };
-  });
+    // Fetch user info to get the name
+    const { data: otherUser } = await supabase.from('users').select('full_name').eq('user_id', otherId).single();
+    const otherName = otherUser?.full_name || 'Seller';
+    if (!convMap[otherId]) convMap[otherId] = { userId: otherId, name: otherName, lastMsg: msg.content };
+  }
 
   const list = $('chat-list');
   if (!list) return;
@@ -688,11 +694,9 @@ async function sendMessage() {
 
   const msg = {
     sender_id: session.id,
-    sender_name: session.name,
     receiver_id: activeChatId,
-    receiver_name: activeChatName || 'Seller',
-    text,
-    read: false,
+    content: text,
+    is_read: false,
   };
 
   const { error } = await supabase.from('messages').insert([msg]);
@@ -719,11 +723,9 @@ function triggerBotResponse(sellerId, sellerName, session) {
     const reply = responses[Math.floor(Math.random() * responses.length)];
     await supabase.from('messages').insert([{
       sender_id: sellerId,
-      sender_name: sellerName,
       receiver_id: session.id,
-      receiver_name: session.name,
-      text: reply,
-      read: false,
+      content: reply,
+      is_read: false,
     }]);
     await openThread(sellerId, sellerName);
     botTypingTimer = null;
