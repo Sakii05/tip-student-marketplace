@@ -475,7 +475,6 @@ function setupUploadForm() {
         price: parseFloat($('product-price').value),
         category: $('product-category').value,
         item_condition: $('product-condition').value,
-        image: $('img-preview')?.src?.startsWith('data:') ? $('img-preview').src : '',
         seller_id: session.id,
       };
 
