@@ -469,6 +469,9 @@ function setupUploadForm() {
       const session = getSession();
       if (!session || session.isAdmin) { showToast('Only students can list items.', 'error'); return; }
 
+      console.log('Current session:', session);
+      console.log('Supabase auth user:', await supabase.auth.getUser());
+
       const newListing = {
         title: $('product-title').value.trim(),
         description: $('product-desc').value.trim(),
@@ -477,7 +480,10 @@ function setupUploadForm() {
         seller_id: session.id,
       };
 
+      console.log('Inserting listing:', newListing);
+
       const { error, data: insertedData } = await supabase.from('listings').insert([newListing]);
+      console.log('Insert result:', { error, insertedData });
       if (error) { 
         showToast(`Failed to post listing: ${error.message}`, 'error'); 
         console.error('Supabase insert error:', error);
