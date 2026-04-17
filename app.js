@@ -297,7 +297,7 @@ async function fetchProducts() {
       price: p.price,
       category: p.category,
       image: p.image || '',
-      condition: p.condition || 'Good',
+      itemCondition: p.item_condition || 'Good',
       sellerId: p.seller_id,
       sellerName: sellerName,
       createdAt: p.created_at,
@@ -409,7 +409,7 @@ async function openProductModal(id) {
         <div class="product-detail-price">${fmt(p.price)}</div>
         <p style="color:var(--text-secondary);font-size:0.88rem;line-height:1.6">${esc(p.description)}</p>
         <div class="product-detail-meta">
-          <span>🏷 Condition: <strong>${esc(p.condition)}</strong></span>
+          <span>🏷 Condition: <strong>${esc(p.itemCondition)}</strong></span>
           <span>👤 Seller: <strong>${esc(p.sellerName)}</strong></span>
           <span>📅 Posted: <strong>${timeAgo(p.createdAt)}</strong></span>
           <span>👁 Views: <strong>${(p.views || 0) + 1}</strong></span>
@@ -474,10 +474,17 @@ function setupUploadForm() {
         description: $('product-desc').value.trim(),
         price: parseFloat($('product-price').value),
         category: $('product-category').value,
-        condition: $('product-condition').value,
+        item_condition: $('product-condition').value,
         image: $('img-preview')?.src?.startsWith('data:') ? $('img-preview').src : '',
         seller_id: session.id,
+      };
 
+      const { error } = await supabase.from('listings').insert([newListing]);
+      if (error) { showToast('Failed to post listing.', 'error'); console.error(error); return; }
+
+      form.reset();
+      if (preview) { preview.classList.remove('visible'); preview.src = ''; }
+      if (zone) {
         zone.querySelector('.upload-icon').style.display = '';
         zone.querySelector('.upload-text').textContent = 'Click to upload or drag & drop';
       }
@@ -495,7 +502,7 @@ function openEditProductModal(id) {
   $('edit-product-id').value = id;
   $('edit-product-title').value = p.title;
   $('edit-product-category').value = p.category;
-  $('edit-product-condition').value = p.condition;
+  $('edit-product-condition').value = p.itemCondition;
   $('edit-product-desc').value = p.description;
   $('edit-product-price').value = p.price;
   openModal('edit-product-modal');
@@ -766,7 +773,7 @@ async function renderProfilePage() {
   const myMapped = (myProducts || []).map(p => ({
     id: p.listing_id || p.id, title: p.title, description: p.description,
     price: p.price, category: p.category, image: p.image || '',
-    condition: p.condition || 'Good', sellerId: p.seller_id,
+    itemCondition: p.item_condition || 'Good', sellerId: p.seller_id,
     sellerName: p.seller_name, createdAt: p.created_at, views: p.views || 0,
   }));
 
@@ -813,7 +820,7 @@ async function renderAdminDashboard() {
   const mappedProducts = (products || []).map(p => ({
     id: p.listing_id || p.id, title: p.title, description: p.description,
     price: p.price, category: p.category, image: p.image || '',
-    condition: p.condition || 'Good', sellerId: p.seller_id,
+    itemCondition: p.item_condition || 'Good', sellerId: p.seller_id,
     sellerName: p.seller_name, createdAt: p.created_at, views: p.views || 0,
   }));
 
@@ -1017,7 +1024,7 @@ function setupEventListeners() {
     const { error } = await supabase.from('listings').update({
       title: $('edit-product-title').value.trim(),
       category: $('edit-product-category').value,
-      condition: $('edit-product-condition').value,
+      item_condition: $('edit-product-condition').value,
       description: $('edit-product-desc').value.trim(),
       price: parseFloat($('edit-product-price').value),
     }).eq('listing_id', id);
@@ -1068,7 +1075,7 @@ function setupEventListeners() {
     const mapped = (products || []).map(p => ({
       id: p.listing_id || p.id, title: p.title, description: p.description,
       price: p.price, category: p.category, image: p.image || '',
-      condition: p.condition || 'Good', sellerId: p.seller_id,
+      itemCondition: p.item_condition || 'Good', sellerId: p.seller_id,
       sellerName: p.seller_name, createdAt: p.created_at, views: p.views || 0,
     }));
     renderAdminTable(mapped);
